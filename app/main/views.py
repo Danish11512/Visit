@@ -1,10 +1,14 @@
 from app import app
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, flash
+from .forms import CheckinForm
+
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    form = CheckinForm()
+    return render_template('index.html', form=form)
+
 
 # @app.route('/login')
 # def login():

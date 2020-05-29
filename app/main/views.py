@@ -4,9 +4,13 @@ from .forms import CheckinForm
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=["GET", "POST"])
 def index():
     form = CheckinForm()
+
+    if form.validate_on_submit():
+        return render_template('checkin.html', fname=form.first_name.data, lname=form.last_name.data)
+        
     return render_template('index.html', form=form)
 
 

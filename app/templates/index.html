@@ -35,13 +35,10 @@ NYCDORIS Visit
 
   <form method="POST" action="/index">
     {{ form.hidden_tag() }}
-    <!-- {{ wtf.quick_form(form) }} -->
-    {{ form.first_name.label }}
-    {{ form.first_name }}
-    <!-- {{ wtf.form_field(form.firstname) }}
-    {{ wtf.form_field(form.lastname) }}
+    {{ wtf.form_field(form.first_name) }}
+    {{ wtf.form_field(form.last_name) }}
     {{ wtf.form_field(form.email) }}
-    {{ wtf.form_field(form.submit) }} -->
+    {{ wtf.form_field(form.submit) }}
     <!-- <div class="form-row">
     <div class="form-group col-md-6">
       <label for="firstname">First Name</label>

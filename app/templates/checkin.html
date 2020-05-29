@@ -7,12 +7,14 @@ NYCDORIS Visit
 
 {% block styles %}
 {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='base.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='base.css')}}">
 {% endblock %}
 
 {% block content %}
-<div class="index-header text-center">
-    <h1>Welcome {{ fname }} {{ lname }} !</h1>
+<div class="container">
+    <div class="index-header text-center text-align-center text-success">
+        <h1>Welcome {{ fname }} {{ lname }} !</h1>
+    </div>
 </div>
 
 <script>

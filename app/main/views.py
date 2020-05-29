@@ -1,6 +1,6 @@
 from app import app
 from flask import Flask, render_template, redirect, url_for, flash
-from .forms import CheckinForm
+from .forms import CheckinForm, LoginForm
 
 
 @app.route('/')
@@ -10,13 +10,17 @@ def index():
 
     if form.validate_on_submit():
         return render_template('checkin.html', fname=form.first_name.data, lname=form.last_name.data)
-        
+
     return render_template('index.html', form=form)
 
 
-# @app.route('/login')
-# def login():
-#     return render_template('login.html')
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect(url_for('login'))
+
+    return render_template('login.html', form=form)
 
 # @app.route('/signup')
 # def signup():

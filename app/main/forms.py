@@ -7,4 +7,11 @@ class CheckinForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2)])
     email = StringField('Email', validators=[DataRequired(), Email(message='Invalid Email'), Length(max=50)])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Check In')
+
+
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Length(min=1, max=64), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Log In")
+

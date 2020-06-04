@@ -12,12 +12,12 @@ NYCDORIS Login
   <nav class="navbar navbar-fixed-top navbar-default" role="navigation" style="border-radius: 0; background-color: black; border-color: black;">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="{{ url_for('index') }}" style="color:white">NYCDORIS Visit</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:white">NYCDORIS Visit</a>
       </div>
       <div>
         <ul class="nav navbar-nav">
         
-          <li><a style="color:white" href="{{ url_for('login') }}">Login</a></li>
+          <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>
         </ul>
       </div>
     </div>
@@ -34,7 +34,7 @@ NYCDORIS Login
   <div  class="row">
     <div class="col-md-4 col-sm-3"></div>
     <div class="col-md-4 col-sm-6">
-      <form method="POST" action="/index">
+      <form method="POST" action="/auth/login">
         {{ form.hidden_tag() }}
         {{wtf.quick_form(form)}}
       </form>

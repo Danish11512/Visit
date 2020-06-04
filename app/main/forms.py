@@ -10,8 +10,5 @@ class CheckinForm(FlaskForm):
     submit = SubmitField('Check In')
 
 
-class LoginForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired(), Length(min=1, max=64), Email()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Log In")
+
 

@@ -7,7 +7,6 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from simplekv.db.sql import SQLAlchemyStore
 
 app = Flask(__name__)
 

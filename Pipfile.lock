@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0b276a1cd996c15a86501aed971313b75c28f3476abe6b6790350bd19b77b26d"
+            "sha256": "57795103567973a196ca58ce565123a95e1fde384d6b7b1d9c6db9a39a454c01"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -95,13 +95,6 @@
             ],
             "index": "pypi",
             "version": "==3.3.7.1"
-        },
-        "flask-kvsession": {
-            "hashes": [
-                "sha256:9c0ee93fae089c45baeda0a3fd3ae32a96ee81c34996017749f8b3fd06df936c"
-            ],
-            "index": "pypi",
-            "version": "==0.6.2"
         },
         "flask-login": {
             "hashes": [
@@ -316,15 +309,6 @@
                 "sha256:5f98b069316ea1c2ed3f67e7f5df6c0d8f10b689964a4a811ff64f0106819ec8"
             ],
             "version": "==1.0.4"
-        },
-        "simplekv": {
-            "hashes": [
-                "sha256:8953a36cb3741ea821c9de1962b5313bf6fe1b927f6ced2a55266eb8ce2cd0f6",
-                "sha256:af91a50af41a286a8b7b93292b21dd1af37f38e9513fea0eb4fa75ce778c1683",
-                "sha256:fcee8d972d092de0dc83732084e389c9b95839503537ef85c1a2eeb07182f2f5"
-            ],
-            "index": "pypi",
-            "version": "==0.14.1"
         },
         "six": {
             "hashes": [

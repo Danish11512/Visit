@@ -8,7 +8,6 @@ verify_ssl = true
 [packages]
 flask = "*"
 sqlalchemy = "*"
-ipython = "*"
 flask-sqlalchemy = "*"
 flask-login = "*"
 flask-wtf = "*"
@@ -16,10 +15,8 @@ flask-bootstrap = "*"
 email-validator = "*"
 flask-migrate = "*"
 faker = "*"
-simplekv = "*"
 psycopg2-binary = "*"
-flask-kvsession = "*"
-logging = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.7"

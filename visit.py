@@ -43,9 +43,9 @@ def reset_db():
     db.drop_all()
     db.create_all()
     Role.insert_roles()
+    setup_roles()
 
 
-@app.cli.command("setup_roles")
 def setup_roles():
     """Insert roles in the proper order."""
     Role.query.delete()

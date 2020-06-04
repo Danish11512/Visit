@@ -14,7 +14,6 @@ from app.models import (
 if os.getenv('FLASK_ENV') == 'development':
     from faker import Faker
 
-# app = create_app(os.getenv("FLASK_CONFIG") or "default")
 migrate = Migrate(app, db)
 
 
@@ -51,7 +50,7 @@ def setup_roles():
     """Insert roles in the proper order."""
     Role.query.delete()
     user = Role(name="User", permissions=0x01, id=1)
-    administrator = Role(name="Administrator", permissions=0xFF, id=3)
+    administrator = Role(name="Administrator", permissions=0xFF, id=2)
     db.session.add(user)
     db.session.add(administrator)
     db.session.commit()

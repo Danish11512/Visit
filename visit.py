@@ -56,15 +56,13 @@ def setup_roles():
     db.session.commit()
 
 
-@app.cli.command("create_dev_users")
+@app.cli.command("generate_fake")
 def create_dev_users():
     """Create users for development."""
     # Administrator
     faker = Faker()
     first_name = faker.first_name()
     last_name = faker.last_name()
-    tag_id = faker.random_int(min=1, max=len(tags) - 1)
-    division = faker.random_elements(elements=divisions, length=1)[0][0]
     administrator = User(
         email="{first_initial}{last_name}@{email_domain}".format(
             first_initial=first_name[0].lower(),
@@ -84,8 +82,6 @@ def create_dev_users():
     for i in range(10):
         first_name = faker.first_name()
         last_name = faker.last_name()
-        tag_id = faker.random_int(min=1, max=len(tags) - 1)
-        division = faker.random_elements(elements=divisions, length=1)[0][0]
         user = User(
             email="{first_initial}{last_name}@{email_domain}".format(
                 first_initial=first_name[0].lower(),

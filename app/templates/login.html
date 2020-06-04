@@ -5,14 +5,11 @@
 NYCDORIS Login
 {% endblock %}
 
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('static', filename='base.css')}}">
-{% endblock %}
 
 {% block content %}
+<body>
 <div class="container">
-  <nav class="navbar navbar-fixed-top navbar-default" role="navigation" style="border-radius: 0; background-color: #2a6496; border-color: #2a6496;">
+  <nav class="navbar navbar-fixed-top navbar-default" role="navigation" style="border-radius: 0; background-color: black; border-color: black;">
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="{{ url_for('index') }}" style="color:white">NYCDORIS Visit</a>
@@ -27,21 +24,26 @@ NYCDORIS Login
   </nav>
 </div>
 
-<div class="container">
-
+<br><br><br><br><br><br>
   <div class="index-header text-center">
     <h1>Welcome to NYC Department of Records</h1>
     <h2 class="lead">Please Log In below</h2>
   </div>
+  <br><br><br>
+<div class="container">
+  <div  class="row">
+    <div class="col-md-4 col-sm-3"></div>
+    <div class="col-md-4 col-sm-6">
+      <form method="POST" action="/index">
+        {{ form.hidden_tag() }}
+        {{wtf.quick_form(form)}}
+      </form>
+    </div>
+    <div class="col-md-4 col-sm-3"></div>
+  </div>
+</div>
 
-  <form method="POST" action="/login">
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.email) }}
-    {{ wtf.form_field(form.password) }}
-    {{ wtf.form_field(form.submit) }}
-    
-  </form>
 
-
-</div><!-- /.container -->
+</body>
+<!-- </div>/.container -->
 {% endblock %}

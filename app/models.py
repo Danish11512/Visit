@@ -5,7 +5,7 @@ from flask import current_app, session
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from app import db, login_manager
 
 
 class Permission:
@@ -192,3 +192,8 @@ class ChangeLog(db.Model):
     old = db.Column(db.String(128))
     new = db.Column(db.String(128))
     category = db.Column(db.String(128))
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

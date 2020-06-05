@@ -16,10 +16,10 @@ NYCDORIS Visit
     </div>
     <div>
       <ul class="nav navbar-nav">
-
-        <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>
         {% if current_user.is_authenticated %}
         <li><a style="color:white" href="{{ url_for('auth.logout') }}">Logout</a></li>
+        {% else %}
+        <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>
         {% endif %}
       </ul>
     </div>

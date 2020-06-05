@@ -8,6 +8,11 @@ from .modules import increase_login_attempt, reset_login_attempts
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
+
+    if current_user.is_authenticated:
+        current_app.logger.info("User is already logged in, routing to auth/index")
+        return redirect(url_for('auth.index'))
+
     form = LoginForm()
     if form.validate_on_submit():  
         user = User.query.filter_by(email= form.email.data).first()
@@ -16,8 +21,7 @@ def login():
             if user.login_attempts < 3 : 
                 if user.verify_password(form.password.data):
                     login_user(user)
-                    current_app.logger.info("User {} logged in".format(user.id))
-                    current_app.logger.info("User {} login attempts reset to 0".format(user.id))
+                    current_app.logger.info("User {} logged in and login attempts reset to 0, redirecting to auth/index".format(user.id))
                     reset_login_attempts(user)
                     return redirect(url_for("auth.index"))
                 else:

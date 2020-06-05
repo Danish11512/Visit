@@ -1,7 +1,7 @@
 import os
 
 from flask_migrate import Migrate
-
+from werkzeug.security import generate_password_hash
 from app import db, app, migrate
 from app.models import (
     User,
@@ -71,7 +71,7 @@ def create_dev_users():
         ),
         first_name=first_name,
         last_name=last_name,
-        password_hash="Change4me",
+        password_hash=generate_password_hash("Change4me"),
         role=Role.query.filter_by(name="Administrator").first()
     )
     db.session.add(administrator)
@@ -90,7 +90,7 @@ def create_dev_users():
             ),
             first_name=first_name,
             last_name=last_name,
-            password_hash="Change4me",
+            password_hash=generate_password_hash("Change4me"),
             role=Role.query.filter_by(name="User").first()
         )
         db.session.add(user)

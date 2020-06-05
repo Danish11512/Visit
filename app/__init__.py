@@ -1,7 +1,7 @@
 import os
 import time
 from flask import Flask, session
-import logging
+from flask_login import LoginManager
 from flask_bootstrap import Bootstrap 
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
@@ -15,7 +15,8 @@ bootstrap = Bootstrap(app)
 app.config.from_object(Config)
 migrate = Migrate(app)
 db = SQLAlchemy(app)
-
+login_manager = LoginManager()
+login_manager.init_app(app)
 from .main import main as main_blueprint
 
 app.register_blueprint(main_blueprint)

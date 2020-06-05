@@ -1,4 +1,4 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
@@ -8,22 +8,6 @@ NYCDORIS Visit
 
 {% block content %}
 <body>
-<div class="container">
-  <nav class="navbar navbar-fixed-top navbar-default" role="navigation" style="border-radius: 0; background-color: black; border-color: black;">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:white">NYCDORIS Visit</a>
-      </div>
-      <div>
-        <ul class="nav navbar-nav">
-        
-          <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-</div>
-
 <br><br><br><br><br><br>
   <div class="index-header text-center">
     <h1>Welcome to NYC Department of Records</h1>

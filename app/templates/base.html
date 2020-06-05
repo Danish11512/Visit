@@ -1,0 +1,20 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}
+NYCDORIS Visit
+{% endblock %}
+
+{% block navbar %} 
+    <nav class="navbar navbar-fixed-top navbar-default" role="navigation" style="border-radius: 0; background-color: black; border-color: black;">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:white">NYCDORIS Visit</a>
+        </div>
+        <div>
+          <ul class="nav navbar-nav">
+          
+            <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+{% endblock %}

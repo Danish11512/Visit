@@ -22,6 +22,9 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
+login_mgr.refresh_view = 'relogin'
+login_mgr.needs_refresh_message = (u"Session timedout, please re-login")
+app.permanent_session_lifetime = timedelta(minutes=35)
 
 from .main import main as main_blueprint
 

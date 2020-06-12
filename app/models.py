@@ -178,6 +178,21 @@ class Password(db.Model):
         self.last_changed = datetime.now()
 
 
+class Appointment(db.Model):
+    """
+    A model that contains a list of appointments for every user.
+    """
+    __tablename__ = "appointments"
+    id = db.Column(db.Integer, primary_key=True)
+    check_in = db.Column(db.Integer)
+    date = db.Column(db.DateTime())
+    time = db.Column(db.DateTime())
+    first_name = db.Column(db.String(64), index=True)
+    last_name = db.Column(db.String(64), index=True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    department = db.Column(db.String(9))
+
+
 class ChangeLog(db.Model):
     """
     A model that contains a list of changes made to a user account.

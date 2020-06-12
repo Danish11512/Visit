@@ -42,6 +42,7 @@ def check_in():
             current_app.logger.info("Guest doesn't exist for today")
             # if guest doesn't exist then tell them they don't have an appointment
             flash('It looks like you don\'t have an appointment today', category='error')
+            return redirect(url_for('main.check_in'))
 
     return render_template('main/check_in.html', form=form)
 
@@ -76,6 +77,7 @@ def check_out():
             current_app.logger.info("Guest doesn't exist for today")
             # if guest doesn't exist then tell them they don't have an appointment
             flash('It looks like you didn\'t have an appointment today', category='error')
+            return redirect(url_for('main.check_in'))
     
     return render_template('main/check_out.html', form=form)
     

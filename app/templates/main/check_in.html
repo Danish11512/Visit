@@ -2,13 +2,14 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-NYCDORIS Check in 
+NYCDORIS Check in
 {% endblock %}
 
 
 {% block content %}
 
 <br><br><br><br><br><br>
+
 <body>
   <div class="index-header text-center">
     <h1>Welcome to NYC Department of Records</h1>
@@ -19,8 +20,8 @@ NYCDORIS Check in
     <div class="row">
       <div class="col-md-3 col-sm-2"></div>
       <div class="col-md-6 col-sm-8">
-          {{wtf.quick_form(form)}}
-          <!-- <div class="form-row">
+        {{wtf.quick_form(form)}}
+        <!-- <div class="form-row">
         <div class="form-group col-md-6">
           <label for="firstname">First Name</label>
           <input class="form-control" id="firstname" placeholder="First Name">
@@ -43,6 +44,12 @@ NYCDORIS Check in
       </div> -->
       </div>
       <div class="col-md-3 col-sm-2"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-5 col-sm-4"></div>
+      <div class="col-md-5 col-sm-2">
+        <h2 class="lead"> Want to <a href="{{ url_for('main.check_out') }}"> Check Out?</a></h2>
+      </div>
     </div>
   </div>
 

@@ -41,7 +41,7 @@ def login():
 @auth.route('/index', methods=["GET", "POST"])
 @login_required
 def index():
-    flash("Logged in successfully")
+    flash("Logged in successfully",category="success")
     return render_template("auth/index.html", name=current_user.first_name)
 
 

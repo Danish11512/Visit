@@ -8,6 +8,7 @@ class Config():
         or "postgresql://developer@127.0.0.1:5432/visit_dev"
     )
     EMAIL_DOMAIN = 'records.nyc.gov'
-    
+    ADMIN = os.environ.get("ADMIN") or "admin@records.nyc.gov"
+
 
     

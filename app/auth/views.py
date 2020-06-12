@@ -3,8 +3,8 @@ from flask import Flask, render_template, redirect, url_for, flash, current_app
 from ..models import User
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import LoginForm, ChangePasswordForm
-from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements
-
+from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password
+from app import db
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
@@ -94,8 +94,8 @@ def change_password():
                 update_user_password(current_user.id, form.password.data)
 
                 if (not current_user.validated):
-                    validate(current_user.id)
-
+                    current_user.validated = True
+                    db.session.commit()
                 current_app.logger.info("User {} changed their password.".format(current_user.email))
                 flash("Your password has been updated.", category="success")
                 return redirect(url_for("auth.index"))

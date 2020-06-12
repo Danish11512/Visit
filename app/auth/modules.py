@@ -61,12 +61,12 @@ def check_password_requirements(email, old_password, password, password_confirma
 
 
 def check_previous_passwords(userid, password):
-    user = User.query.get(userid=id)
-    if (check_password_hash(pwhash=user.password_list.p1, password=form.password.data)
-        or check_password_hash(pwhash=user.password_list.p2, password=form.password.data)
-        or check_password_hash(pwhash=user.password_list.p3, password=form.password.data)
-        or check_password_hash(pwhash=user.password_list.p4, password=form.password.data)
-        or check_password_hash(pwhash=user.password_list.p5, password=form.password.data)):
+    user = User.query.get(int(userid))
+    if (check_password_hash(pwhash=user.password_list.p1, password=password)
+        or check_password_hash(pwhash=user.password_list.p2, password=password)
+        or check_password_hash(pwhash=user.password_list.p3, password=password)
+        or check_password_hash(pwhash=user.password_list.p4, password=password)
+        or check_password_hash(pwhash=user.password_list.p5, password=password)):
             # If the inputted password is one of the user's last five passwords , return True 
             return True 
     else:
@@ -74,9 +74,9 @@ def check_previous_passwords(userid, password):
 
 
 def update_user_password(userid, password):
-    user = User.query.get(userid=id)
+    user = User.query.get(int(userid))
     user.password_list.update(user.password_hash)
-    user.password_hash = generate_password_hash(form.password.data)
+    user.password_hash = generate_password_hash(password)
     db.session.add(user)
     db.session.commit()
 

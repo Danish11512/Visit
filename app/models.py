@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 from flask import current_app, session
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login_manager
@@ -193,6 +193,20 @@ class ChangeLog(db.Model):
     new = db.Column(db.String(128))
     category = db.Column(db.String(128))
 
+
+class AnonymousUser(AnonymousUserMixin):
+
+    @staticmethod
+    def can(self, permissions):
+        return False
+
+    @staticmethod
+    def is_administrator(self):
+        return False
+
+
+
+login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -81,7 +81,6 @@ def change_password():
     form = ChangePasswordForm()
     current_app.logger.info("Checking submitted password")
     if form.validate_on_submit():
-        current_app.logger.info("Checking submitted password")
 
         if check_previous_passwords(current_user.id, form.password.data):
             # If the inputted password is one of the user's last five passwords , redirect back to form to put a new password

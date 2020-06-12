@@ -81,12 +81,3 @@ def update_user_password(userid, password):
     db.session.commit()
 
 
-
-
-
-def validate(userid):
-    user = User.query.get(userid=id)
-    user.validated = True
-    db.session.add(user)
-    db.session.commit()
-

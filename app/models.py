@@ -55,7 +55,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     validated = db.Column(db.Boolean, default=False)
     login_attempts = db.Column(db.Integer, default=0)
-   
+    is_supervisor = db.Column(db.Boolean, default=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    supervisor = db.relationship("User", remote_side=[id])
     old_passwords = db.Column(db.Integer, db.ForeignKey("passwords.id"))
 
    

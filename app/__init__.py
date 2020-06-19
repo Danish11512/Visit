@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from datetime import timedelta
+from flask_mail import Mail
 
 app = Flask(__name__)
 
@@ -19,6 +20,8 @@ app.config.from_object(Config)
 migrate = Migrate(app)
 
 db = SQLAlchemy(app)
+mail = Mail()
+mail.init_app(app)
 
 
 login_manager = LoginManager()

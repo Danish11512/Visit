@@ -17,5 +17,9 @@ checkin = {
     "Guest Checked Out": 2
 }
 
+departments = [
+    ('Research','Research'),
+    ('Genealogy','Genealogy')
+]
 
     

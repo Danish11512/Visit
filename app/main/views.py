@@ -1,6 +1,6 @@
 from . import main
 from flask import Flask, render_template, redirect, url_for, flash, current_app
-from .forms import CheckinForm, CheckoutForm
+from .forms import CheckinForm, CheckoutForm, AppointmentForm
 from ..models import Appointment
 from datetime import datetime
 from app import db
@@ -10,7 +10,8 @@ from config import checkin
 @main.route('/')
 @main.route('/index', methods=["GET", "POST"])
 def index():
-    return render_template('main/index.html')
+    form = AppointmentForm()
+    return render_template('main/index.html', form=form)
 
 
 @main.route('/check_in', methods=["GET", "POST"])

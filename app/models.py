@@ -59,6 +59,7 @@ class User(UserMixin, db.Model):
     supervisor_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     supervisor = db.relationship("User", remote_side=[id])
     old_passwords = db.Column(db.Integer, db.ForeignKey("passwords.id"))
+    is_active = db.Column(db.Boolean, default=True)
 
    
 

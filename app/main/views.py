@@ -54,7 +54,7 @@ def user_list_page():
                     + search_result_lname
                 )
             )
-
+    print(list_of_users)
     if not list_of_users:
         flash("No results found", category="error")
     # Pass in separate list of users with and without divisions

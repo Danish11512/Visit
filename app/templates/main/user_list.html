@@ -38,8 +38,6 @@
             </tr>
         </thead>
         <tbody>
-            {# list out the users without a division #}
-            {% if list_of_users|length == 0 %}
             {% for user in list_of_users|sort(attribute='id') %}
             <tr>
                 <td>{{ user.email }}</td>
@@ -47,7 +45,6 @@
                 <td>{{ user.last_name }}</td>
             </tr>
             {% endfor %}
-            {% endif %}
         </tbody>
     </table>
 </div>

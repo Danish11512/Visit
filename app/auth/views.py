@@ -1,5 +1,5 @@
 from . import auth
-from flask import Flask, render_template, redirect, url_for, flash, current_app,request
+from flask import Flask, render_template, redirect, url_for, flash, current_app,request, session
 from ..models import User
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import LoginForm, ChangePasswordForm , PasswordResetRequestForm, PasswordResetForm
@@ -7,6 +7,9 @@ from .modules import increase_login_attempt, reset_login_attempts, check_previou
 from app import db
 from ..email_notification import send_email
 from ..utils import InvalidResetToken
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from datetime import datetime
+from werkzeug.security import check_password_hash
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
@@ -133,7 +136,6 @@ def password_reset_request():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         current_app.logger.info("Finished querying for user with given email")
         if user:
-            print("helloMunif")
             # If the user exists, generate a reset token and send an email containing a link to reset the user's
             # password
             token = user.generate_reset_token()

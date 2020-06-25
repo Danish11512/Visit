@@ -17,7 +17,7 @@ NYCDORIS Visit
     <div>
       <ul class="nav navbar-nav">
         {% if current_user.is_authenticated %}
-        <li><a style="color:white"  href="{{ url_for('main.user_list_page') }}">Edit User Information</a>
+        <li><a style="color:white"  href="{{ url_for('auth.user_list_page') }}">Edit User Information</a>
         <li><a style="color:white" href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}
         <li><a style="color:white" href="{{ url_for('auth.login') }}">Login</a></li>

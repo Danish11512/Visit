@@ -69,7 +69,6 @@ NYCDORIS Visit
                 'minTime': '9:00am',
                 'maxTime': '5:45pm',
                 'step': 15,
-                'setTime': new Date()
             });
             $('#time').timepicker('getTime', new Date());
             //If you can :
@@ -78,7 +77,11 @@ NYCDORIS Visit
 
             $("#date").datepicker({
                 dateFormat: 'mm/dd/yy',
-                startDate: 'd'
+                autoclose: true,
+                assumeNearbyYear: true,
+                clearBtn: true,
+                disableTouchKeyboard: true, 
+                todayBtn: true,
             });
         });
     </script>

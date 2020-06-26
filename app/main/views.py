@@ -81,6 +81,7 @@ def check_out():
             return redirect(url_for('main.check_in'))
     
     return render_template('main/check_out.html', form=form)
+
     
     
 

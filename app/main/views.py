@@ -7,14 +7,28 @@ from app import db
 from config import checkin
 
 
-@main.route('/')
+@main.route('/', methods=["GET", "POST"])
 @main.route('/index', methods=["GET", "POST"])
 def index():
     form = AppointmentForm()
 
-    # if form.validate_on_submit():
-    #     return redirect(url_for('main.index'))    
+    
+# Things to flesh out: 
+# 1. Date must be today after current time or after today 
+# 2. Time must be after current time and check to see if there is a appointment for that time on that day, if success send email saying appointment sent for approval. and add appointment to db
 
+    if form.validate_on_submit():
+    # Date must be today after current time or after today 
+        if form.date.data.strftime("%Y-%m-%d") > datetime.now.strftime("%Y-%m-%d"):
+            # create object
+            pass
+        if form.date.data.strftime("%Y-%m-%d") == datetime.now.strftime("%Y-%m-%d"):
+            if form.time.data > datetime.now().time:
+            #create pbject
+                pass
+        return redirect(url_for('main.index'))    
+    else:
+        'hi'
     return render_template('main/index.html', form=form)
 
 

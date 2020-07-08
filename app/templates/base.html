@@ -54,6 +54,7 @@ NYCDORIS Visit
 
 {% block scripts %} <!-- Include any JS scripts here -->
     {{ super() }}
+    {{ moment.include_moment() }}
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script type="text/javascript"
@@ -64,24 +65,17 @@ NYCDORIS Visit
 
         $(function () {
             $("#time").timepicker({
-                'theme':'basic',
+                // 'theme':'basic',
                 'timeFormat': 'h:i A',
                 'minTime': '9:00am',
                 'maxTime': '5:45pm',
                 'step': 15,
-            });
-            $('#time').timepicker('getTime', new Date());
-            //If you can :
-            // 1. make sure it only shows time after current time, or in the view function make it so you can't select time after current,             
-            // 3. make sure it only shows date after current date and in view function make it so that it doesn't accept a previous date 
+            });            
 
             $("#date").datepicker({
                 dateFormat: 'mm/dd/yy',
                 autoclose: true,
                 assumeNearbyYear: true,
-                clearBtn: true,
-                disableTouchKeyboard: true, 
-                todayBtn: true,
             });
         });
     </script>

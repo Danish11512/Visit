@@ -18,30 +18,34 @@ def index():
 
     if form.validate_on_submit():
         current_app.logger.info("Form Validated")  
-    # Date must be today after current time or after today 
-        form_date = form.date.data
-        form_time = form.time.data
-        now_date = datetime.now().date()
-        now_time = datetime.now().time()
+    # Creating datetime object to use
+        form_datetime = datetime.combine(form.date.data, form.time.data)
+        now_datetime = datetime.now()
+        
         # If date is today's or more than today's check if time is taken and create object, otherwise flash to chose another time 
-        if form_date <= now_date:
-            current_app.logger.info("Dates Checked, checking time")  
-            appointment = Appointment.query.filter_by(date=form_date, time=form_time)
+        if form_datetime.date() <= now_datetime.date():
+            current_app.logger.info("Dates checked, checking time")  
+            appointment = Appointment.query.filter_by(datetime=form_datetime).all()
             
-            if appointment or form_time <= now_time:
+            if appointment:
+                # If an appointment exists flash and move on
+                current_app.logger.info("Appointment already exists") 
+                flash("The date and time you have chosen is already taken, please choose another one", category="error")
+            
+            elif form_datetime.time() <= now_datetime.time():
                 # See if there is an appointment for that time or chosen time is before current time, flash a message
-                current_app.logger.info("Time Invalid") 
+                current_app.logger.info("Time taken") 
                 flash("The time you have chosen is taken, please change your time", category="error")
             else:
                 # if there is no appoinment make object and flash 
                 app = Appointment(
                     check_in = 0,
-                    date = form_date,
-                    time = form_time,
+                    datetime = form_datetime,
                     first_name = form.first_name.data,
                     last_name = form.last_name.data,
                     email = form.email.data,
                     department = form.department.data
+                
                 )
                 db.session.add(app)
                 db.session.commit()

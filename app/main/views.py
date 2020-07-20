@@ -17,6 +17,9 @@ def index():
 # 1. Date must be today after current time or after today 
 # 2. Time must be after current time and check to see if there is a appointment for that time on that day, if success send email saying appointment sent for approval. and add appointment to db
 
+# *** CHange timepicker and datepicker to not highlight past dates and to not highlight times that are taken
+
+
     if form.validate_on_submit():
         current_app.logger.info("Form Validated")  
     # Date must be today after current time or after today 

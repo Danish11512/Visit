@@ -65,17 +65,19 @@ NYCDORIS Visit
 
         $(function () {
             $("#time").timepicker({
-                // 'theme':'basic',
                 'timeFormat': 'h:i A',
                 'minTime': '9:00am',
                 'maxTime': '5:45pm',
                 'step': 15,
+                // minTime: new Date()
             });            
 
             $("#date").datepicker({
                 dateFormat: 'mm/dd/yy',
                 autoclose: true,
                 assumeNearbyYear: true,
+                minDate: new Date(),
+                beforeShowDay: $.datepicker.noWeekends,
             });
         });
     </script>

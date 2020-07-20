@@ -25,7 +25,7 @@ class AppointmentForm(FlaskForm):
     email = StringField('Email', validators=[Optional(), Email(message='Invalid Email'), Length(max=50)])
     department = SelectField('Department', choices=departments, validators=[DataRequired()])
     date = DateField('Date', format="%m/%d/%Y", default=datetime.today(), validators=[DataRequired()])
-    time = TimeField('Time', format="%I:%M %p", default=datetime.now(), validators=[DataRequired()])
+    time = TimeField('Time', format="%I:%M %p", default=datetime.now().time(), validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 

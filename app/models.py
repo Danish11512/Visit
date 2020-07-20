@@ -189,7 +189,7 @@ class Appointment(db.Model):
     time = db.Column(db.Time())
     first_name = db.Column(db.String(64), index=True)
     last_name = db.Column(db.String(64), index=True)
-    email = db.Column(db.String(64), unique=True, index=True)
+    email = db.Column(db.String(64), index=True)
     department = db.Column(db.String(9))
     approved = db.Column(db.Boolean, default=False)
     time_of_creation = db.Column(db.DateTime(), default=datetime.utcnow)

@@ -14,28 +14,45 @@ def index():
 
     
 # Things to flesh out: 
-# 1. Date must be today after current time or after today 
 # 2. Time must be after current time and check to see if there is a appointment for that time on that day, if success send email saying appointment sent for approval. and add appointment to db
-
-# *** CHange timepicker and datepicker to not highlight past dates and to not highlight times that are taken
-
 
     if form.validate_on_submit():
         current_app.logger.info("Form Validated")  
     # Date must be today after current time or after today 
-        form_date = form.date.data 
-        form_date = form_date.strftime("%Y-%m-%d")
+        form_date = form.date.data
         form_time = form.time.data
-        form_time = form_time.strftime("%H:%M")
-        now_date = datetime.now().strftime("%Y-%m-%d")
-        now_time = datetime.now().strftime("%H:%M")
-        
+        now_date = datetime.now().date()
+        now_time = datetime.now().time()
         # If date is today's or more than today's check if time is taken and create object, otherwise flash to chose another time 
-        if form_date >= now_date:
-            current_app.logger.info("Checking Date")  
-            # create object
-            pass
-        # if date is before today's flash to choose anoher date
+        if form_date <= now_date:
+            current_app.logger.info("Dates Checked, checking time")  
+            appointment = Appointment.query.filter_by(date=form_date, time=form_time)
+            
+            if appointment or form_time <= now_time:
+                # See if there is an appointment for that time or chosen time is before current time, flash a message
+                current_app.logger.info("Time Invalid") 
+                flash("The time you have chosen is taken, please change your time", category="error")
+            else:
+                # if there is no appoinment make object and flash 
+                app = Appointment(
+                    check_in = 0,
+                    date = form_date,
+                    time = form_time,
+                    first_name = form.first_name.data,
+                    last_name = form.last_name.data,
+                    email = form.email.data,
+                    department = form.department.data
+                )
+                db.session.add(app)
+                db.session.commit()
+                flash('Appointment created, wating for approval', category='success')
+                current_app.logger.info("Appointment Created") 
+                return redirect(url_for('main.index'))    
+        else:
+            # if date is before today's flash to choose anoher date
+            current_app.logger.info("Current Date is taken")
+            flash("The date you have chosen is before the current date, please change your date", category="error")
+        
         
         return redirect(url_for('main.index'))    
     return render_template('main/index.html', form=form)

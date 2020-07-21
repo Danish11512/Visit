@@ -11,4 +11,15 @@ class Config():
     ADMIN = os.environ.get("ADMIN") or "admin@records.nyc.gov"
 
 
+checkin = {
+    "Appointment Created": 0,
+    "Guest Checked In": 1,
+    "Guest Checked Out": 2
+}
+
+departments = [
+    ('Research','Research'),
+    ('Genealogy','Genealogy')
+]
+
     

@@ -8,9 +8,9 @@ NYCDORIS Visit
   <div class="container">
     <div class="navbar-header">
       {% if current_user.is_authenticated %}
-      <a class="navbar-brand" href="{{ url_for('auth.index') }}" style="color:black">NYCDORIS Visit</a>
+      <a class="navbar-brand" href="{{ url_for('auth.index') }}" style="color:black; font-weight: bold;">NYCDORIS Visit</a>
       {% else %}
-      <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:black">NYCDORIS Visit</a>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:black; font-weight: bold;">NYCDORIS Visit</a>
       {% endif %}
     </div>
     <div>

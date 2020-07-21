@@ -55,7 +55,6 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-
 @auth.route('/')
 @auth.route('/index', methods=["GET", "POST"])
 @login_required
@@ -104,6 +103,7 @@ def change_password():
 
     return render_template("auth/change_password.html", form=form)
 
+
 @auth.route("/edit_user_list", methods=["GET", "POST"])
 @admin_required
 @login_required
@@ -142,7 +142,6 @@ def user_list_page():
                     + search_result_lname
                 )
             )
-    print(list_of_users)
     if not list_of_users:
         flash("No results found", category="error")
     # Pass in separate list of users with and without divisions

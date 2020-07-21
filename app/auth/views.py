@@ -6,6 +6,7 @@ from .forms import LoginForm, ChangePasswordForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password
 from app import db
 from sqlalchemy.orm import sessionmaker
+from ..decorators import admin_required
 from app.utils import eval_request_bool
 
 @auth.route('/login', methods=["GET", "POST"])
@@ -104,6 +105,7 @@ def change_password():
     return render_template("auth/change_password.html", form=form)
 
 @auth.route("/edit_user_list", methods=["GET", "POST"])
+@admin_required
 @login_required
 def user_list_page():
     """

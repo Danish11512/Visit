@@ -1,11 +1,7 @@
 from . import main
 from flask import Flask, render_template, redirect, url_for, flash,request, current_app
 from .forms import CheckinForm, CheckoutForm, AppointmentForm
-from flask_login import login_required
-from ..decorators import admin_required
-from sqlalchemy.orm import sessionmaker
 from app import db
-from app.utils import eval_request_bool
 from ..models import User, Appointment
 from config import checkin
 

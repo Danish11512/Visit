@@ -12,7 +12,7 @@
         <a href="{{ url_for('auth.user_list_page') }}?active=True">View Active Users</a>
     {% endif %}
 </div>
-<div clas="row">
+<div class="row">
     <form method="GET">
         <input type="hidden" name="active" value="{% if active_users %}True{% else %}False{% endif %}" />
         <div class="row">

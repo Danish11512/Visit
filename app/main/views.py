@@ -10,6 +10,10 @@ from config import checkin
 @main.route('/', methods=["GET", "POST"])
 @main.route('/index', methods=["GET", "POST"])
 def index():
+
+    flash('test', category="info")
+    flash('test', category="error")
+    print('hi')
     form = AppointmentForm()
 
     if form.validate_on_submit():

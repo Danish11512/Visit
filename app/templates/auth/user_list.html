@@ -13,6 +13,7 @@
     {% endif %}
 </div>
 <div class="row">
+    <div class="col-md-6 pull-right">
     <form method="GET">
         <input type="hidden" name="active" value="{% if active_users %}True{% else %}False{% endif %}" />
         <div class="row">
@@ -27,8 +28,9 @@
         </div>
     </form>
 </div>
+</div>
 <br>
-<div class="col-xs-6 col-md-12">
+<div class="col-xs-6 col-md-11">
     <table class="table" style="position:absolute;margin-left:auto;margin-right:auto;" >
         <thead>
             <tr>

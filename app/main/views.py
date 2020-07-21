@@ -4,6 +4,7 @@ from .forms import CheckinForm, CheckoutForm, AppointmentForm
 from app import db
 from ..models import User, Appointment
 from config import checkin
+from datetime import datetime
 
 
 @main.route('/', methods=["GET", "POST"])
@@ -20,10 +21,11 @@ def index():
         # If date is today's or more than today's check if time is taken and create object, otherwise flash to chose another time 
         if form_datetime.date() <= now_datetime.date():
             current_app.logger.info("Dates checked, checking time")  
-            appointment = Appointment.query.filter_by(datetime=form_datetime).all()
+            # check if there is an appointment foor that dateime and where check_in is 1 which means an appointment exist that hasn't been cancelled or completed
+            appointment = Appointment.query.filter_by(datetime=form_datetime, check_in=1).all()
             
             if appointment:
-                # If an appointment exists flash and move on
+                # If an appointment exists flash check if i has already happened, if not then flash and move on
                 current_app.logger.info("Appointment already exists") 
                 flash("The date and time you have chosen is already taken, please choose another one", category="error")
             
@@ -51,7 +53,6 @@ def index():
             # if date is before today's flash to choose anoher date
             current_app.logger.info("Current Date is taken")
             flash("The date you have chosen is before the current date, please change your date", category="error")
-        
         
         return redirect(url_for('main.index'))    
     return render_template('main/index.html', form=form)
@@ -84,9 +85,14 @@ def check_in():
                     redirect(url_for('main.check_in'))
             else:
                 # don't change anything and redirect to check in form
-                current_app.logger.info("Guest checked in status is not 0, so proabably already check in")
-                flash('It seems like you have already checked in', category='error')
-                return redirect(url_for('main.check_in'))
+                if guest.check_in == 0:
+                    current_app.logger.info("Guest checked in status is not 0, so proabably already checked")
+                    flash('It seems like you have already checked in', category='error')
+                    return redirect(url_for('main.check_in'))
+                else:
+                    current_app.logger.info("Guest doesn't have an appointment today")
+                    flash('It seems you don\'t have an appointment today', category='error')
+                    return redirect(url_for('main.check_in'))
         else:
             current_app.logger.info("Guest doesn't exist for today")
             # if guest doesn't exist then tell them they don't have an appointment

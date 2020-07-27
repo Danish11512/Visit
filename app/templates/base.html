@@ -40,7 +40,7 @@ NYCDORIS Visit
       <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated %}
         {% if current_user.role_id == 2 %}
-        <li><a style="color:black"  href="{{ url_for('auth.user_list_page') }}">Users</a>
+        <li><a style="color:black"  href="{{ url_for('auth.user_list') }}">Users</a>
         {% endif %}
         <li><a style="color:black" href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}

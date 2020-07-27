@@ -2,7 +2,7 @@ from . import auth
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
 from ..models import User
 from flask_login import login_required, login_user, logout_user, current_user
-from .forms import LoginForm, ChangePasswordForm
+from .forms import LoginForm, ChangePasswordForm, PasswordResetForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password
 from app import db
 from sqlalchemy.orm import sessionmaker
@@ -104,10 +104,10 @@ def change_password():
     return render_template("auth/change_password.html", form=form)
 
 
-@auth.route("/edit_user_list", methods=["GET", "POST"])
+@auth.route("/user_list", methods=["GET", "POST"])
 @admin_required
 @login_required
-def user_list_page():
+def user_list():
     """
     Renders a page with the list of users on it and related data on them. Also includes edit button to direct to
     edit user page
@@ -121,6 +121,7 @@ def user_list_page():
     list_of_users_all = User.query.filter_by(is_active=active).all()
 
     if request.method == "GET":
+        current_app.logger.info("Starting Search")
         entry = request.args.get("search_input", "")
         search_result_email = User.query.filter(
             User.email.ilike("%" + entry + "%")
@@ -152,3 +153,39 @@ def user_list_page():
     )
 if __name__ == '__auth__':
     app.run(debug=True)
+
+
+
+@auth.route("/user/<user_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def user_profile(user_id):
+    return 'hi'
+
+
+@auth.route("/user/reset/<user_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def admin_reset(user_id):
+    # There needs to be anew form that resets the password instead of changing it. Which means it doesn't ask for te old password but instead just resets it where the user can then log back in 
+    user = User.query.filter_by(id=user_id).first()
+    form = PasswordResetForm()
+    if not user:
+        flash("No user with id {} was found".format(user_id), category="error")
+        current_app.logger.info("There was no user found, so nothing to reset") 
+        return redirect(url_for("auth.user_list"))
+    # After validation update the info for the user 
+    if form.validate_on_submit():
+        user.password_list.update(current_user.password_hash)
+        user.password = form.password.data
+        user.login_attempts = 0
+        user.validated = True
+        db.session.add(user)
+        db.session.commit()
+        current_app.logger.info("{current_user_email} update the password for {updated_user}.".format(current_user_email=current_user.email, updated_user=user.email))
+        flash("{} password has been updated.".format(user.email), category="success")
+        return redirect(url_for("auth.user_list"))
+    else:
+        return render_template("auth/reset_password.html", form=form)
+    
+

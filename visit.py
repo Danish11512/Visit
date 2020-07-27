@@ -10,6 +10,7 @@ from app.models import (
     ChangeLog,
     Role,
 )
+from config import departments
 
 if os.getenv('FLASK_ENV') == 'development':
     from faker import Faker
@@ -72,7 +73,8 @@ def create_dev_users():
         first_name=first_name,
         last_name=last_name,
         password_hash=generate_password_hash("Change4me"),
-        role=Role.query.filter_by(name="Administrator").first()
+        role=Role.query.filter_by(name="Administrator").first(),
+        department=departments[0][0]
     )
     db.session.add(administrator)
     administrator.password_list.update(administrator.password_hash)
@@ -91,7 +93,8 @@ def create_dev_users():
             first_name=first_name,
             last_name=last_name,
             password_hash=generate_password_hash("Change4me"),
-            role=Role.query.filter_by(name="User").first()
+            role=Role.query.filter_by(name="User").first(), 
+            department=departments[i%2][0]
         )
         db.session.add(user)
         user.password_list.update(user.password_hash)

@@ -52,11 +52,15 @@ class User(UserMixin, db.Model):
     last_name = db.Column(db.String(64), index=True)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
     email = db.Column(db.String(64), unique=True, index=True)
+    department = db.Column(db.String(9), unique=False, index=True)
     password_hash = db.Column(db.String(128))
     validated = db.Column(db.Boolean, default=False)
     login_attempts = db.Column(db.Integer, default=0)
-   
+    is_supervisor = db.Column(db.Boolean, default=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    supervisor = db.relationship("User", remote_side=[id])
     old_passwords = db.Column(db.Integer, db.ForeignKey("passwords.id"))
+    is_active = db.Column(db.Boolean, default=True)
 
    
 

@@ -160,7 +160,7 @@ if __name__ == '__auth__':
 @login_required
 @admin_required
 def user_profile(user_id):
-    return 'hi'
+    return render_template('auth/user_profile.html')
 
 
 @auth.route("/user/reset/<user_id>", methods=["GET", "POST"])

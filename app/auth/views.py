@@ -1,8 +1,8 @@
 from . import auth
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
-from ..models import User
+from ..models import User, Role
 from flask_login import login_required, login_user, logout_user, current_user
-from .forms import LoginForm, ChangePasswordForm, PasswordResetForm
+from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password
 from app import db
 from sqlalchemy.orm import sessionmaker
@@ -182,10 +182,33 @@ def admin_reset(user_id):
         user.validated = True
         db.session.add(user)
         db.session.commit()
-        current_app.logger.info("{current_user_email} update the password for {updated_user}.".format(current_user_email=current_user.email, updated_user=user.email))
+        current_app.logger.info("{current_user_email} updated the password for {updated_user}.".format(current_user_email=current_user.email, updated_user=user.email))
         flash("{} password has been updated.".format(user.email), category="success")
         return redirect(url_for("auth.user_list"))
     else:
         return render_template("auth/reset_password.html", form=form)
     
 
+@auth.route("/register", methods=["GET", "POST"])
+@login_required
+@admin_required
+def register():
+    # The admin can register new users fro mhere if they meet the requirements in the form 
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(
+            email=form.email.data.lower(),
+            password=form.password.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            department=form.department.data,
+            role_id=Role.query.filter_by(name=form.role.data[0]).first(),
+            is_supervisor=form.is_supervisor.data,
+            validated=True
+        )
+        db.session.add(user)
+        db.session.commit()
+        current_app.logger.info("Successfully registered user {}".format(user.email))
+        flash("User successfully registered.", category="success")
+        return redirect(url_for("auth.register"))
+    return render_template("auth/register.html", form=form)

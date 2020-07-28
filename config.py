@@ -22,4 +22,7 @@ departments = [
     ('Genealogy','Genealogy')
 ]
 
-    
+roles = [
+    ("User", "User"),
+    ("Administrator", "Administrator")
+] 

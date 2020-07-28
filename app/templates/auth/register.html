@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Visit - Register{% endblock %}
+
+{% block content %}
+    <<br/><br/><br/>
+
+    <body>
+        <div class="index-header text-center">
+          <h1>Register New User</h1>
+        </div>
+        <br><br><br>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-sm-2"></div>
+            <div class="col-md-6 col-sm-8">
+              {{wtf.quick_form(form)}}
+            </div>
+            <div class="col-md-3 col-sm-2"></div>
+          </div>
+          </div>
+      </body>
+{% endblock %}

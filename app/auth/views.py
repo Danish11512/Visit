@@ -273,6 +273,7 @@ def admin_reset(user_id):
 def register():
     # The admin can register new users fro mhere if they meet the requirements in the form 
     form = RegistrationForm()
+    role_input = form.role.data
     if form.validate_on_submit():
         user = User(
             email=form.email.data.lower(),
@@ -280,9 +281,9 @@ def register():
             first_name=form.first_name.data,
             last_name=form.last_name.data,
             department=form.department.data,
-            role_id=Role.query.filter_by(name=form.role.data[0]).first(),
+            role=Role.query.filter_by(name=form.role.data).first(),
             is_supervisor=form.is_supervisor.data,
-            validated=True
+            validated=False
         )
         db.session.add(user)
         db.session.commit()

@@ -1,5 +1,7 @@
 import re
-from ..models import User
+import sqlalchemy
+from ..models import User, ChangeLog, Role
+from datetime import datetime
 from app import db
 from flask import current_app, flash
 from flask_login import current_user
@@ -80,4 +82,144 @@ def update_user_password(userid, password):
     db.session.add(user)
     db.session.commit()
 
+
+
+def get_changelog_by_user_id(id):
+    current_app.logger.info("Start function get_changelog_by_user_id()")
+    current_app.logger.info("Querying for changes made to user with id {}".format(id))
+    changes = ChangeLog.query.filter_by(user_id=id).order_by(
+        sqlalchemy.desc(ChangeLog.timestamp)
+    )
+    current_app.logger.info("End function get_changelog_by_user_id()")
+    return changes
+
+
+
+
+def update_user_information(
+    user,
+    first_name_input,
+    last_name_input,
+    role_input,
+    department_input,
+    supervisor_id_input,
+    is_supervisor_input,
+    is_active_input,
+    
+):
+    current_app.logger.info(
+        "Start function update_user_information for {}".format(user.email)
+    )
+    if (
+        first_name_input
+        and first_name_input != ""
+        and (user.first_name != first_name_input)
+    ):
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="FIRST NAME",
+            old=user.first_name,
+            new=first_name_input,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.first_name = first_name_input
+
+    if (
+        last_name_input
+        and last_name_input != ""
+        and (user.last_name != last_name_input)
+    ):
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="LAST NAME",
+            old=user.last_name,
+            new=last_name_input,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.last_name = last_name_input
+
+    if role_input and role_input != user.role_id:
+        new_role = Role.query.filter_by(name=role_input).first()
+        if user.role != new_role:
+            change = ChangeLog(
+                changer_id=current_user.id,
+                user_id=user.id,
+                timestamp=datetime.now(),
+                category="ROLE",
+                old=user.role.name,
+                new=new_role.name,
+            )
+            db.session.add(change)
+            db.session.commit()
+            user.role = Role.query.filter_by(name=role_input).first()
+
+    if department_input and user.department != department_input:
+        if user.department:
+            old_department = user.department
+        else:
+            old_department = "None"
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="DEPARTMENT",
+            old=old_department,
+            new=department_input,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.department = department_input
+
+    if (user.supervisor_id != supervisor_id_input) and (
+        supervisor_id_input != 0 or user.supervisor
+    ):
+        oldsup = User.query.filter_by(id=user.supervisor_id).first()
+        sup = User.query.filter_by(id=supervisor_id_input).first()
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="SUPERVISOR",
+            old=None if (user.supervisor_id is None) else oldsup.email,
+            new=None if supervisor_id_input == 0 else sup.email,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.supervisor = sup
+
+    if is_supervisor_input is not None and (user.is_supervisor != is_supervisor_input):
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="IS SUPERVISOR",
+            old=user.is_supervisor,
+            new=is_supervisor_input,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.is_supervisor = is_supervisor_input
+
+    if is_active_input is not None and (user.is_active != is_active_input):
+        change = ChangeLog(
+            changer_id=current_user.id,
+            user_id=user.id,
+            timestamp=datetime.now(),
+            category="IS ACTIVE",
+            old=user.is_active,
+            new=is_active_input,
+        )
+        db.session.add(change)
+        db.session.commit()
+        user.is_active = is_active_input
+
+    db.session.add(user)
+    db.session.commit()
+    current_app.logger.info("User info updated in update_user_information()")
 

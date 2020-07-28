@@ -231,6 +231,7 @@ def user_profile(user_id):
     page = request.args.get("page", 1, type=int)
     pagination = changes.paginate(page, per_page=10, error_out=False)
     changes = pagination.items
+    name = user.first_name + " " + user.last_name
 
     return render_template(
         "auth/user_profile.html",
@@ -238,6 +239,7 @@ def user_profile(user_id):
         form=form,
         changes=changes,
         pagination=pagination,
+        name=name
     )
 
 

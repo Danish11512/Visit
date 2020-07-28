@@ -45,7 +45,7 @@ NYCDORIS Visit
         {% if current_user.role_id == 2 %}
         <li>
           <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="history-dropdown" data-toggle="dropdown"
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="true"
               style="margin-top:9px; color:black; background-color:#fec830;border: 0">
               Users
@@ -57,6 +57,7 @@ NYCDORIS Visit
           </div>
         </li>
         {% endif %}
+        <li><a style="color:black" href="{{ url_for('auth.change_password') }}">Change Password</a></li>
         <li><a style="color:black" href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}
         <li><a style="color:black" href="{{ url_for('auth.login') }}">Login</a></li>

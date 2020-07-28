@@ -6,20 +6,20 @@ NYCDORIS Visit
 
 
 {% block head %}
-    {{ super() }}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"
-          media="screen">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" rel="stylesheet"
-          media="screen">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css"
-          rel="stylesheet" media="screen">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css.map"
-          rel="stylesheet" media="screen">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js">
+{{ super() }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"
+  media="screen">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css" rel="stylesheet"
+  media="screen">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css" rel="stylesheet"
+  media="screen">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css.map"
+  rel="stylesheet" media="screen">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js">
 {% endblock %}
 
 
@@ -27,20 +27,35 @@ NYCDORIS Visit
 
 
 {% block navbar %}
-<nav class="navbar navbar-fixed-top navbar-default navbar-expand-sm" role="navigation" style="border-radius: 0; background-color:#fec830; border-color: #fec830">
+<nav class="navbar navbar-fixed-top navbar-default navbar-expand-sm" role="navigation"
+  style="border-radius: 0; background-color:#fec830; border-color: #fec830">
   <div class="container">
     <div class="navbar-header">
       {% if current_user.is_authenticated %}
-      <a class="navbar-brand" href="{{ url_for('auth.index') }}" style="color:black; font-weight: bold;">NYCDORIS Visit</a>
+      <a class="navbar-brand" href="{{ url_for('auth.index') }}" style="color:black; font-weight: bold;">NYCDORIS
+        Visit</a>
       {% else %}
-      <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:black; font-weight: bold;">NYCDORIS Visit</a>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}" style="color:black; font-weight: bold;">NYCDORIS
+        Visit</a>
       {% endif %}
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated %}
         {% if current_user.role_id == 2 %}
-        <li><a style="color:black"  href="{{ url_for('auth.user_list') }}">Users</a>
+        <li>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="history-dropdown" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="true"
+              style="margin-top:9px; color:black; background-color:#fec830;border: 0">
+              Users
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="history-dropdown">
+              <li><a href="{{ url_for('auth.user_list')  }}">User List</a></li>
+              <li><a href="{{ url_for('auth.register')  }}">Register New Users</a></li>
+            </ul>
+          </div>
+        </li>
         {% endif %}
         <li><a style="color:black" href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}
@@ -55,33 +70,34 @@ NYCDORIS Visit
 
 
 
-{% block scripts %} <!-- Include any JS scripts here -->
-    {{ super() }}
-    {{ moment.include_moment() }}
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
-    <script>
+{% block scripts %}
+<!-- Include any JS scripts here -->
+{{ super() }}
+{{ moment.include_moment() }}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js"></script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
+<script>
 
-        $(function () {
-            $("#time").timepicker({
-                'timeFormat': 'h:i A',
-                'minTime': '9:00am',
-                'maxTime': '5:45pm',
-                'step': 15,
-                // minTime: new Date()
-            });            
+  $(function () {
+    $("#time").timepicker({
+      'timeFormat': 'h:i A',
+      'minTime': '9:00am',
+      'maxTime': '5:45pm',
+      'step': 15,
+      // minTime: new Date()
+    });
 
-            $("#date").datepicker({
-                dateFormat: 'mm/dd/yy',
-                autoclose: true,
-                assumeNearbyYear: true,
-                minDate: new Date(),
-                beforeShowDay: $.datepicker.noWeekends,
-            });
-        });
-    </script>
+    $("#date").datepicker({
+      dateFormat: 'mm/dd/yy',
+      autoclose: true,
+      assumeNearbyYear: true,
+      minDate: new Date(),
+      beforeShowDay: $.datepicker.noWeekends,
+    });
+  });
+</script>
 {% endblock %}

@@ -25,6 +25,4 @@ departments = [
 roles = [
     ("User", "User"),
     ("Administrator", "Administrator")
-]
-
-    
+] 

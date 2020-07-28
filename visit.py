@@ -74,7 +74,8 @@ def create_dev_users():
         last_name=last_name,
         password_hash=generate_password_hash("Change4me"),
         role=Role.query.filter_by(name="Administrator").first(),
-        department=departments[0][0]
+        department=departments[0][0],
+        is_supervisor=True
     )
     db.session.add(administrator)
     administrator.password_list.update(administrator.password_hash)

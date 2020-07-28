@@ -2,8 +2,8 @@ from . import auth
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
 from ..models import User, Role
 from flask_login import login_required, login_user, logout_user, current_user
-from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm
-from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password
+from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm, ChangeUserDataForm
+from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password, update_user_information, get_changelog_by_user_id
 from app import db
 from sqlalchemy.orm import sessionmaker
 from ..decorators import admin_required
@@ -155,12 +155,90 @@ if __name__ == '__auth__':
     app.run(debug=True)
 
 
-
 @auth.route("/user/<user_id>", methods=["GET", "POST"])
 @login_required
 @admin_required
 def user_profile(user_id):
-    return 'hi'
+    # Usernames are everything in the email before the @ symbol
+    # i.e. for sdhillon@records.nyc.gov, username is sdhillon
+    user = User.query.filter_by(id=user_id).first()
+    form = ChangeUserDataForm()
+    list_of_sups = [
+        (user.id, user.email) for user in User.query.filter_by(is_supervisor=True).all()
+    ] + [(0, "No Supervisor")]
+    if user.supervisor:
+        # If a user has a supervisor, then that supervisor should be selected by default
+        list_of_sups.insert(
+            0,
+            list_of_sups.pop(
+                list_of_sups.index((user.supervisor.id, user.supervisor.email))
+            ),
+        )
+    form.supervisor_id.choices = list_of_sups
+    if not user:
+        # If no user like that exists then flash and send back to userlist page
+        current_app.logger.info("No user with that id exists")
+        flash("No user with id {} was found".format(user_id), category="error")
+        return redirect(url_for("auth.user_list"))
+    elif user.role.name == "Administrator" and user == current_user:
+        # If user is admin, redirect to index and flash a message,
+        # as admin should not be allowed to edit their own info through frontend.
+        # This also avoids the issue that comes with the fact that admins don't have
+        # a supervisor.
+        flash("Admins cannot edit their own information.", category="error")
+        current_app.logger.info("Admin trying to edit their own info, sending back")
+        return redirect(url_for("auth.user_list"))
+
+    if form.validate_on_submit():
+        if user.id == form.supervisor_id.data:
+            # A user cannot be their own super so they are have to be flashed
+            current_app.logger.info("A user cannot be their own supervisor, please change")
+            flash("A user cannot be their own supervisor. Please revise your supervisor ""field.",category="error",)
+        else:
+            # If everthing is normal and there are no errors then proceed to save and return back the page
+            current_app.logger.info("User information updated")
+            flash("User information has been updated", category="success")
+            update_user_information(
+                user,
+                form.first_name.data,
+                form.last_name.data,
+                form.role.data,
+                form.department.data,
+                form.supervisor_id.data,
+                form.is_supervisor.data,
+                form.is_active.data,
+            )
+            current_app.logger.info(
+                "{} updated information for {}".format(current_user.email, user.email)
+            )
+            flash("Information Updated", category="success")
+            return redirect(url_for("auth.user_profile", user_id=user.id))
+    else:
+        # Pre-populate the form with current values
+        form.first_name.data = user.first_name
+        form.last_name.data = user.last_name
+        form.department.data = user.department
+        form.is_supervisor.data = user.is_supervisor
+        form.supervisor_id.data = user.supervisor.email if user.supervisor else 0
+        form.is_active.data = user.is_active
+        form.role.data = user.role.name
+        current_app.logger.info("Populated form with user info")
+    
+
+    # For ChangeLog Table
+    changes = get_changelog_by_user_id(user.id)
+
+    page = request.args.get("page", 1, type=int)
+    pagination = changes.paginate(page, per_page=10, error_out=False)
+    changes = pagination.items
+
+    return render_template(
+        "auth/user_profile.html",
+        user=user,
+        form=form,
+        changes=changes,
+        pagination=pagination,
+    )
 
 
 @auth.route("/user/reset/<user_id>", methods=["GET", "POST"])

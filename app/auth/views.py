@@ -1,10 +1,12 @@
 from . import auth
+import os
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
 from ..models import User, Role
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm, ChangeUserDataForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password, update_user_information, get_changelog_by_user_id
-from app import db
+from app import db, mail
+from flask_mail import Message
 from sqlalchemy.orm import sessionmaker
 from ..decorators import admin_required
 from app.utils import eval_request_bool
@@ -60,11 +62,16 @@ def login():
 @login_required
 def index():
     if current_user.is_authenticated and (not current_user.validated):
-        # if the user is not valitaed they will be routed back to change password form 
+        # if the user is not validated they will be routed back to change password form 
         current_app.logger.info("{} visited index but is not validated. Redirecting to /auth/change_password".format(current_user.email))
         return redirect(url_for("auth.change_password"))
     else:   
         flash("Logged in successfully")
+        current_app.logger.info("user {} logged in".format(current_user.email))
+
+        msg = Message("Testing Subject",recipients=["danish.faruqi1@gmail.com"])
+        msg.html = "<b> Testing html </b>"
+        mail.send(msg)
         return render_template("auth/index.html", name=current_user.first_name)
 
 
@@ -151,8 +158,6 @@ def user_list():
         list_of_users=list_of_users,
         active_users=active,
     )
-if __name__ == '__auth__':
-    app.run(debug=True)
 
 
 @auth.route("/user/<user_id>", methods=["GET", "POST"])
@@ -292,3 +297,7 @@ def register():
         flash("User successfully registered.", category="success")
         return redirect(url_for("auth.register"))
     return render_template("auth/register.html", form=form)
+
+
+if __name__ == '__auth__':
+    app.run(debug=True) 

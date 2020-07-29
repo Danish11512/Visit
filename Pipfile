@@ -18,6 +18,7 @@ faker = "*"
 psycopg2-binary = "*"
 ipython = "*"
 flask-moment = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.7"

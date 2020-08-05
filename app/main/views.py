@@ -5,6 +5,7 @@ from app import db
 from ..models import User, Appointment
 from config import checkin
 from datetime import datetime
+from ..email_notification import send_email
 
 
 @main.route('/', methods=["GET", "POST"])
@@ -47,7 +48,10 @@ def index():
                 db.session.add(app)
                 db.session.commit()
                 flash('Appointment created, wating for approval', category='success')
-                current_app.logger.info("Appointment Created") 
+                current_app.logger.info("Appointment Created , waiting approval")
+                template = "Hi {}, you appointment has been created, it is waiting for approval".format(form.first_name.data)
+                send_email(to=form.email.data, subject= "Appointment Created, Waiting Confirmation", template="main/email/new_appointment", first_name=form.first_name.data, department=form.department.data)
+                current_app.logger.info("Email Sent")
                 return redirect(url_for('main.index'))    
         else:
             # if date is before today's flash to choose anoher date

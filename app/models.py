@@ -195,6 +195,7 @@ class Appointment(db.Model):
     email = db.Column(db.String(64), index=True)
     department = db.Column(db.String(9))
     approved = db.Column(db.Boolean, default=False)
+    cancelled = db.Column(db.Boolean, default=False)
     time_of_creation = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
 
 

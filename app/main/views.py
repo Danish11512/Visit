@@ -19,18 +19,18 @@ def index():
         form_datetime = datetime.combine(form.date.data, form.time.data)
         now_datetime = datetime.now()
         
-        # If date is today's or more than today's check if time is taken and create object, otherwise flash to chose another time 
-        if form_datetime.date() <= now_datetime.date():
+        # If date is today's or more than today's check if time is taken and create object, otherwise flash to choose another time 
+        if form_datetime.date() >= now_datetime.date():
             current_app.logger.info("Dates checked, checking time")  
             # check if there is an appointment foor that dateime and where check_in is 1 which means an appointment exist that hasn't been cancelled or completed
-            appointment = Appointment.query.filter_by(datetime=form_datetime, check_in=1).all()
+            appointment = Appointment.query.filter_by(datetime=form_datetime, check_in=1, cancelled=False).all()
             
             if appointment:
-                # If an appointment exists flash check if i has already happened, if not then flash and move on
-                current_app.logger.info("Appointment already exists") 
+                # If an appointment exists and is not cancelled flash check if it has already happened, if not then flash and move on
+                current_app.logger.info("Appointment already exists and not cancelled") 
                 flash("The date and time you have chosen is already taken, please choose another one", category="error")
             
-            elif form_datetime.time() <= now_datetime.time():
+            elif form_datetime.time() >= now_datetime.time():
                 # See if there is an appointment for that time or chosen time is before current time, flash a message
                 current_app.logger.info("Time taken") 
                 flash("The time you have chosen is taken, please change your time", category="error")
@@ -50,7 +50,7 @@ def index():
                 flash('Appointment created, wating for approval', category='success')
                 current_app.logger.info("Appointment Created , waiting approval")
                 template = "Hi {}, you appointment has been created, it is waiting for approval".format(form.first_name.data)
-                send_email(to=form.email.data, subject= "Appointment Created, Waiting Confirmation", template="main/email/new_appointment", first_name=form.first_name.data, department=form.department.data)
+                send_email(to=form.email.data, subject= "Appointment Created, Waiting Confirmation", template="main/email/new_appointment", first_name=form.first_name.data, department=form.department.data, date=datetime.strftime(form_datetime, "%B %d, %Y"), time=datetime.strftime(form_datetime, "%I:%M %p"))
                 current_app.logger.info("Email Sent")
                 return redirect(url_for('main.index'))    
         else:

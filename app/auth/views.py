@@ -68,10 +68,6 @@ def index():
     else:   
         flash("Logged in successfully")
         current_app.logger.info("user {} logged in".format(current_user.email))
-
-        msg = Message("Testing Subject",recipients=["danish.faruqi1@gmail.com"])
-        msg.html = "<b> Testing html </b>"
-        mail.send(msg)
         return render_template("auth/index.html", name=current_user.first_name)
 
 

@@ -18,39 +18,38 @@ def index():
     # Creating datetime object to use
         form_datetime = datetime.combine(form.date.data, form.time.data)
         now_datetime = datetime.now()
-        
-        # If date is today's or more than today's check if time is taken and create object, otherwise flash to choose another time 
-        if form_datetime.date() >= now_datetime.date():
-            current_app.logger.info("Dates checked, checking time")  
+    
+        if form_datetime > now_datetime:
+            # If the date and time is more than today check if there is an appointment that already exists for that date and time
+            current_app.logger.info("Date and time checked, checking existing appointments")  
             # check if there is an appointment foor that dateime and where check_in is 1 which means an appointment exist that hasn't been cancelled or completed
-            appointment = Appointment.query.filter_by(datetime=form_datetime, check_in=1, cancelled=False).all()
-            
-            if appointment:
+            appointments = Appointment.query.filter_by(datetime=form_datetime, department=form.department.data).all()
+            print (appointments)
+            if appointments and all(appointment.check_in_state < 4 for appointment in appointments):
                 # If an appointment exists and is not cancelled flash check if it has already happened, if not then flash and move on
                 current_app.logger.info("Appointment already exists and not cancelled") 
                 flash("The date and time you have chosen is already taken, please choose another one", category="error")
-            
-            elif form_datetime.time() >= now_datetime.time():
-                # See if there is an appointment for that time or chosen time is before current time, flash a message
-                current_app.logger.info("Time taken") 
-                flash("The time you have chosen is taken, please change your time", category="error")
             else:
                 # if there is no appoinment make object and flash 
                 app = Appointment(
-                    check_in = 0,
+                    check_in_state = 0,
                     datetime = form_datetime,
                     first_name = form.first_name.data,
                     last_name = form.last_name.data,
                     email = form.email.data,
                     department = form.department.data
-                
                 )
                 db.session.add(app)
                 db.session.commit()
                 flash('Appointment created, wating for approval', category='success')
                 current_app.logger.info("Appointment Created , waiting approval")
-                template = "Hi {}, you appointment has been created, it is waiting for approval".format(form.first_name.data)
-                send_email(to=form.email.data, subject= "Appointment Created, Waiting Confirmation", template="main/email/new_appointment", first_name=form.first_name.data, department=form.department.data, date=datetime.strftime(form_datetime, "%B %d, %Y"), time=datetime.strftime(form_datetime, "%I:%M %p"))
+                send_email(to=form.email.data, 
+                            subject= "Appointment Created, Waiting Confirmation", 
+                            template="main/email/new_appointment", 
+                            first_name=form.first_name.data, 
+                            department=form.department.data, 
+                            date=datetime.strftime(form_datetime, "%B %d, %Y"), 
+                            time=datetime.strftime(form_datetime, "%I:%M %p"))
                 current_app.logger.info("Email Sent")
                 return redirect(url_for('main.index'))    
         else:
@@ -58,7 +57,7 @@ def index():
             current_app.logger.info("Current Date is taken")
             flash("The date you have chosen is before the current date, please change your date", category="error")
         
-        return redirect(url_for('main.index'))    
+        return redirect(url_for('main.index'))   
     return render_template('main/index.html', form=form)
 
 

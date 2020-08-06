@@ -22,7 +22,8 @@ class Config():
 checkin = {
     "Appointment Created": 0,
     "Guest Checked In": 1,
-    "Guest Checked Out": 2
+    "Guest Checked Out": 2, 
+    "Appointment Cancelled": 3
 }
 
 departments = [

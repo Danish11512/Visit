@@ -188,14 +188,13 @@ class Appointment(db.Model):
     """
     __tablename__ = "appointments"
     id = db.Column(db.Integer, primary_key=True)
-    check_in = db.Column(db.Integer) # Check config for details 
+    check_in_state = db.Column(db.Integer) # Check config for details 
     datetime = db.Column(db.DateTime())
     first_name = db.Column(db.String(64), index=True)
     last_name = db.Column(db.String(64), index=True)
     email = db.Column(db.String(64), index=True)
     department = db.Column(db.String(9))
     approved = db.Column(db.Boolean, default=False)
-    cancelled = db.Column(db.Boolean, default=False)
     time_of_creation = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
 
 

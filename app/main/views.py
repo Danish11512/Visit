@@ -70,32 +70,39 @@ def check_in():
     if form.validate_on_submit():
         current_app.logger.info("Form Validated")  
         
-        guest = Appointment.query.filter_by(email=form.email.data,  check_in=0).first()
+        guests = Appointment.query.filter_by(email=form.email.data,  check_in_state=0).all()
+        guests.sort(key=lambda x: x.datetime, reverse=True)
+        print(guests)
 
-        if guest:
+        if guests :
             # If the guest exist, check if they have an appointment today, if they do then check them in otherwise flash a message
-            if  guest.check_in == 0 and (guest.datetime.date() == datetime.now().date()):
-                # check guest in if they have an appointment of the same day and are approved
-                if guest.approved:
-                    guest.check_in = checkin["Guest Checked In"]
-                    db.session.add(guest)
-                    db.session.commit()
-                    current_app.logger.info("Guest Checked In")
-                    return render_template('main/confirm_checkin.html', fname=form.first_name.data, lname=form.last_name.data)
+            for guest in guests:
+                if guest.datetime.date() == datetime.now().date():
+                    # check guest in if they have an appointment of the same day and are approved
+                    if guest.approved:
+                        guest.check_in_state = checkin["Guest Checked In"]
+                        db.session.add(guest)
+                        db.session.commit()
+                        current_app.logger.info("Guest Checked In")
+                        return render_template('main/confirm_checkin.html', fname=form.first_name.data, lname=form.last_name.data)
+                        break
+                    else:
+                        current_app.logger.info("Guest was not approved, not checking in")
+                        flash('I looks like your appoinmen was not approved, please contact the administrator', category='error')
+                        redirect(url_for('main.check_in'))
+                        break
                 else:
-                    current_app.logger.info("Guest was not approved, not checking in")
-                    flash('I looks like your appoinmen was not approved, please contact the administrator', category='error')
-                    redirect(url_for('main.check_in'))
-            else:
-                # don't change anything and redirect to check in form
-                if guest.check_in == 0:
-                    current_app.logger.info("Guest checked in status is not 0, so proabably already checked")
-                    flash('It seems like you have already checked in', category='error')
-                    return redirect(url_for('main.check_in'))
-                else:
-                    current_app.logger.info("Guest doesn't have an appointment today")
-                    flash('It seems you don\'t have an appointment today', category='error')
-                    return redirect(url_for('main.check_in'))
+                    # don't change anything and redirect to check in form if check_in_status is not 0
+                    if guest.check_in_state != 0:
+                        current_app.logger.info("Guest checked in status is not 0, so proabably already checked")
+                        flash('It seems like you have already checked in', category='error')
+                        return redirect(url_for('main.check_in'))
+                        break
+                    else:
+                        current_app.logger.info("Guest doesn't have an appointment today")
+                        flash('It seems you don\'t have an appointment today', category='error')
+                        return redirect(url_for('main.check_in'))
+                        break
         else:
             current_app.logger.info("Guest doesn't exist for today")
             # if guest doesn't exist then tell them they don't have an appointment
@@ -123,7 +130,7 @@ def check_out():
             if guest.datetime.date() == datetime.now().date():
                 # if the dates match move on other wise flash there is no appointment today
 
-                if  guest.check_in == 1:
+                if  guest.check_in_state == 1:
                     # check guest out if they have checked in already
                     guest.check_in = checkin["Guest Checked Out"]
                     db.session.add(guest)

@@ -29,6 +29,14 @@ class AppointmentForm(FlaskForm):
     time = TimeField('Time', format="%I:%M %p", default=datetime.now().time(), validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class CancelForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=2)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2)])
+    email = StringField('Email', validators=[Optional(), Email(message='Invalid Email'), Length(max=50)])
+    department = SelectField('Department', choices=departments, validators=[DataRequired()])
+    date = DateField('Date', format="%m/%d/%Y", default=datetime.today(), validators=[DataRequired()])
+    time = TimeField('Time', format="%I:%M %p", default=datetime.now().time(), validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
     
 

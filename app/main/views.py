@@ -1,6 +1,6 @@
 from . import main
 from flask import Flask, render_template, redirect, url_for, flash,request, current_app
-from .forms import CheckinForm, CheckoutForm, AppointmentForm
+from .forms import CheckinForm, CheckoutForm, AppointmentForm, CancelForm
 from app import db
 from ..models import User, Appointment
 from config import checkin
@@ -30,7 +30,7 @@ def index():
                 current_app.logger.info("Appointment already exists and not cancelled") 
                 flash("The date and time you have chosen is already taken, please choose another one", category="error")
             else:
-                # if there is no appoinment make object and flash 
+                # if there is no appoinmtent make object and flash 
                 app = Appointment(
                     check_in_state = 0,
                     datetime = form_datetime,
@@ -148,12 +148,22 @@ def check_out():
         else:
             # don't change anything and redirect to check in form
             current_app.logger.info("Guest checked out status is not 0, so proabably already check out or never checked in ")
-            flash('It seems like you have not checked in yet or don\'t have an appoinment today', category='error')
+            flash('It seems like you have not checked in yet or don\'t have an appointment today', category='error')
             return redirect(url_for('main.check_in'))
 
            
     
     return render_template('main/check_out.html', form=form)
+
+
+
+@main.route('/cancel_appointment', methods=["GET", "POST"])
+def cancel_appointment():
+    form = CancelForm()
+    return render_template('main/cancel_appointment.html', form=form)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

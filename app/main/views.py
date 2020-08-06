@@ -117,35 +117,41 @@ def check_out():
     if form.validate_on_submit():
         current_app.logger.info("Form Validated") 
 
-        # Get guest object
-        guest = Appointment.query.filter_by(email=form.email.data, check_in=1).first()
+        # Get guest object, check if the gest has already been checked in 
+        guests = Appointment.query.filter_by(email=form.email.data, check_in_state=1).all()
 
-        if guest:
+        if guests:
              # If the guest exist, check if they had an appointment today, if they do then check them out otherwise flash a message
-            if guest.datetime.date() == datetime.now().date():
-                # if the dates match move on other wise flash there is no appointment today
+            for guest in guests:
+                if guest.datetime.date() != datetime.now().date():
+                    guests.remove(guest)
 
-                if  guest.check_in_state == 1:
-                    # check guest out if they have checked in already
-                    guest.check_in = checkin["Guest Checked Out"]
-                    db.session.add(guest)
-                    db.session.commit()
-                    current_app.logger.info("Guest Checked Out")
-                    return render_template('main/confirm_checkout.html', fname=form.first_name.data, lname=form.last_name.data)
-                else:
-                    # don't change anything and redirect to check in form
-                    current_app.logger.info("Guest checked out status is not 0, so proabably already check out or never checked in ")
-                    flash('It seems like you have not checked in yet', category='error')
-                    return redirect(url_for('main.check_in'))
+            if guests:
+                guests.sort(key=lambda x: x.datetime, reverse=False)
+                # If there is a guest then check them in, if there's more than one only check in the earliest one
+                guest = guests[0]
+                guest.check_in_state = checkin["Guest Checked Out"]
+                db.session.add(guest)
+                db.session.commit()
+                send_email(to=form.email.data, 
+                subject= "Check Out Confirmed", 
+                template="main/email/check_out", 
+                first_name=form.first_name.data, 
+                department=guest.department, 
+                date=datetime.strftime(datetime.now(), "%B %d, %Y"))
+                current_app.logger.info("Guest Checked Out")
+                return render_template('main/confirm_checkout.html', fname=form.first_name.data, lname=form.last_name.data)
             else: 
                 flash('It seems like you didn\'t have an apppointment today', category='error')
-                current_app.logger.info("Guest doesn\'t have an appoinment today")
+                current_app.logger.info("Guest doesn\'t have an appointment today")
                 return redirect(url_for('main.check_in'))
         else:
-            current_app.logger.info("Guest doesn't exist")
-            # if guest doesn't exist then tell them they don't have an appointment
-            flash('It looks like you didn\'t have an appointment today', category='error')
+            # don't change anything and redirect to check in form
+            current_app.logger.info("Guest checked out status is not 0, so proabably already check out or never checked in ")
+            flash('It seems like you have not checked in yet or don\'t have an appoinment today', category='error')
             return redirect(url_for('main.check_in'))
+
+           
     
     return render_template('main/check_out.html', form=form)
 

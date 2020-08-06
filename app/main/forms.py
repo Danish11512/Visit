@@ -8,6 +8,7 @@ from config import departments
 class CheckinForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2)])
+    department = SelectField('Department', choices=departments, validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email(message='Invalid Email'), Length(max=50)])
     submit = SubmitField('Check In')
 

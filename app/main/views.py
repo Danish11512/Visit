@@ -69,46 +69,41 @@ def check_in():
 
     if form.validate_on_submit():
         current_app.logger.info("Form Validated")  
-        
-        guests = Appointment.query.filter_by(email=form.email.data,  check_in_state=0).all()
-        guests.sort(key=lambda x: x.datetime, reverse=True)
-        print(guests)
+        # Get all the appointmesnt that are created but not checked in or anything else
+        guests = Appointment.query.filter_by(email=form.email.data,  check_in_state=0, approved=True, department=form.department.data).all()
 
-        if guests :
-            # If the guest exist, check if they have an appointment today, if they do then check them in otherwise flash a message
-            for guest in guests:
-                if guest.datetime.date() == datetime.now().date():
-                    # check guest in if they have an appointment of the same day and are approved
-                    if guest.approved:
-                        guest.check_in_state = checkin["Guest Checked In"]
-                        db.session.add(guest)
-                        db.session.commit()
-                        current_app.logger.info("Guest Checked In")
-                        return render_template('main/confirm_checkin.html', fname=form.first_name.data, lname=form.last_name.data)
-                        break
-                    else:
-                        current_app.logger.info("Guest was not approved, not checking in")
-                        flash('I looks like your appoinmen was not approved, please contact the administrator', category='error')
-                        redirect(url_for('main.check_in'))
-                        break
-                else:
-                    # don't change anything and redirect to check in form if check_in_status is not 0
-                    if guest.check_in_state != 0:
-                        current_app.logger.info("Guest checked in status is not 0, so proabably already checked")
-                        flash('It seems like you have already checked in', category='error')
-                        return redirect(url_for('main.check_in'))
-                        break
-                    else:
-                        current_app.logger.info("Guest doesn't have an appointment today")
-                        flash('It seems you don\'t have an appointment today', category='error')
-                        return redirect(url_for('main.check_in'))
-                        break
-        else:
-            current_app.logger.info("Guest doesn't exist for today")
-            # if guest doesn't exist then tell them they don't have an appointment
-            flash('It looks like you don\'t have an appointment today', category='error')
+        if not guests:
+             # Take care of the flash messages for each of the conditions that could have gone wrong
+            current_app.logger.info("Either the email was wrong, user was already checked in, not approved, or wrong department was chosen")
+            flash("Looks like you appointment is not here, please try putting the correct information or contact the administrator")
             return redirect(url_for('main.check_in'))
+        else:
+            # remove all the onees that are not for today
+            for guest in guests:
+                if guest.datetime.date() != datetime.now().date():
+                    guests.remove(guest)
 
+        if guests:
+            # sort to check in the earliest one first
+            guests.sort(key=lambda x: x.datetime, reverse=False)
+            # If there is a guest then check them in, if there's more than one only check in the earliest one
+            guest = guests[0]
+            guest.check_in_state = checkin["Guest Checked In"]
+            db.session.add(guest)
+            db.session.commit()
+            current_app.logger.info("Guest Checked In")
+            send_email(to=form.email.data, 
+                subject= "Checkin Confirmed", 
+                template="main/email/check_in", 
+                first_name=form.first_name.data, 
+                department=form.department.data, 
+                date=datetime.strftime(datetime.now(), "%B %d, %Y"), 
+                time=datetime.strftime(datetime.now(), "%I:%M %p"))
+            return render_template('main/confirm_checkin.html', fname=form.first_name.data, lname=form.last_name.data)
+        else:
+            # flash that your apopintment is not today
+            current_app.logger.info("The apopintment does not exist for today")
+            flash("Looks like you don't have an appointment today")
     return render_template('main/check_in.html', form=form)
 
     

@@ -1,5 +1,5 @@
 <p>Hi {{ first_name }},</p>
-<p>Your appointment with the NYC Department of Records and Information Services' {{ department }} Department on {{ date }} at {{ time }} has been created. Please wait while it is approved. Please note this is <b>NOT A CONFORMATION</b>, you will receive a separate email confirming that one of our staff has approved your request.</p>
+<p>Your appointment with the NYC Department of Records and Information Services' {{ department }} Department on {{ date }} at {{ time }} has been created. Please wait while it is approved. Please note this is <mark><b>NOT A CONFIRMATION</b></mark>, you will receive a separate email confirming that one of our staff has approved your request.</p>
 <p>Sincerely, <br> The Visit Team</p>
 <p>
     <small>Note: replies to this email address are not monitored.</small>

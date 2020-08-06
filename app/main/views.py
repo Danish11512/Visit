@@ -24,11 +24,12 @@ def index():
             current_app.logger.info("Date and time checked, checking existing appointments")  
             # check if there is an appointment foor that dateime and where check_in is 1 which means an appointment exist that hasn't been cancelled or completed
             appointments = Appointment.query.filter_by(datetime=form_datetime, department=form.department.data).all()
-            print (appointments)
-            if appointments and all(appointment.check_in_state < 4 for appointment in appointments):
+            
+            if appointments and any(appointment.check_in_state < 3 for appointment in appointments):
                 # If an appointment exists and is not cancelled flash check if it has already happened, if not then flash and move on
                 current_app.logger.info("Appointment already exists and not cancelled") 
                 flash("The date and time you have chosen is already taken, please choose another one", category="error")
+                return redirect(url_for('main.index')) 
             else:
                 # if there is no appoinmtent make object and flash 
                 app = Appointment(
@@ -140,7 +141,7 @@ def check_out():
                 department=guest.department, 
                 date=datetime.strftime(datetime.now(), "%B %d, %Y"))
                 current_app.logger.info("Guest Checked Out")
-                return render_template('main/confirm_checkout.html', fname=form.first_name.data, lname=form.last_name.data)
+                return render_template('main/confirm_checkout.html', fname=guest.first_name, lname=guest.last_name)
             else: 
                 flash('It seems like you didn\'t have an apppointment today', category='error')
                 current_app.logger.info("Guest doesn\'t have an appointment today")
@@ -160,6 +161,40 @@ def check_out():
 @main.route('/cancel_appointment', methods=["GET", "POST"])
 def cancel_appointment():
     form = CancelForm()
+
+    if form.validate_on_submit():
+        form_datetime = datetime.combine(form.date.data, form.time.data)
+    # Check if there's an appointment that is check_in_state of 0 ( no checked in ) with the given date, department and email
+        guest = Appointment.query.filter_by(email=form.email.data, department=form.department.data, datetime= form_datetime).first()
+        if guest:
+            if guest.check_in_state == 0:
+                # if checkin state is 0 checnge it to 3 and flash and redirect
+                guest.check_in_state = checkin["Appointment Cancelled"]
+                db.session.add(guest)
+                db.session.commit()
+                send_email(to=form.email.data, 
+                subject= "Cancellation Confirmed", 
+                template="main/email/cancel", 
+                first_name=guest.first_name, 
+                department=guest.department, 
+                date=datetime.strftime(form_datetime, "%B %d, %Y"), 
+                time=datetime.strftime(form_datetime, "%I:%M %p"))
+
+                current_app.logger.info("Appointment Cancelled")
+                flash("Your appointment for {} on {} with {} Department was cancelled".format(form.time.data, form.date.data, form.department.data))
+                return redirect(url_for('main.cancel_appointment'))
+            elif guest.check_in_state == 1 or guest.check_in_state == 2:
+                # appointmetn exsits but the guest has already checkin/checked out so nothing changes, flash and redirect
+                flash("Looks like you have already visited so the appointment cannot be cancelled")
+                current_app.logger.info("Appointment is already checked in or check out")
+                return redirect(url_for('main.cancel_appointment'))
+            else:
+                # The only other option is that the Appointment has already been cancelled
+                flash("Looks like your appointment has already been cancelled")
+                current_app.logger.info("Appointment is already cancelled")
+                return redirect(url_for('main.cancel_appointment'))
+        # say that the appointment doesn't exists andredirect
+        
     return render_template('main/cancel_appointment.html', form=form)
 
 

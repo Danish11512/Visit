@@ -1,0 +1,15 @@
+<p>Hi {{ admin_name }},</p>
+<p>Thank you for registering a user with The New York Department of Records Visit, all information about the user is detailed below. The user you created ill receive a notification with their credentials.</p>
+<p>
+    <b>User Information:</b><br>
+    Name: {{ first_name }} {{ last_name }} <br>
+    Email: {{ user_email }} <br>
+    Department: {{ department }} <br>
+    Role: {{ role }} <br>
+    Supervisor?: {% if is_supervisor %} Yes {% else %} No {% endif %} <br>
+
+</p>
+<p>Sincerely, <br> The Visit Team</p>
+<p>
+    <small>Note: replies to this email address are not monitored.</small>
+</p>

@@ -188,7 +188,7 @@ class Appointment(db.Model):
     """
     __tablename__ = "appointments"
     id = db.Column(db.Integer, primary_key=True)
-    check_in = db.Column(db.Integer) # Check config for details 
+    check_in_state = db.Column(db.Integer) # Check config for details 
     datetime = db.Column(db.DateTime())
     first_name = db.Column(db.String(64), index=True)
     last_name = db.Column(db.String(64), index=True)

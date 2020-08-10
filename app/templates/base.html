@@ -60,6 +60,9 @@ NYCDORIS Visit
         <li><a style="color:black" href="{{ url_for('auth.change_password') }}">Change Password</a></li>
         <li><a style="color:black" href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}
+        <li><a style="color:black" href="{{ url_for('main.check_in') }}">Check In</a></li>
+        <li><a style="color:black" href="{{ url_for('main.check_out') }}">Check Out</a></li>
+        <li><a style="color:black" href="{{ url_for('main.cancel_appointment') }}">Cancel Appointment</a></li>
         <li><a style="color:black" href="{{ url_for('auth.login') }}">Login</a></li>
         {% endif %}
       </ul>

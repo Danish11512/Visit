@@ -1,0 +1,16 @@
+<p>Hi {{ first_name }},</p>
+<p>Thank you for registering with The New York Department of Records Visit, all information detailed below. Please note that the password given to you is temporary will you will be asked to change it once to log in.</p>
+<p>
+    <b>User Information:</b><br>
+    Name: {{ first_name }} {{ last_name }} <br>
+    Password: <mark>{{ password }}</mark> <br>
+    Email: {{ user_email }} <br>
+    Department: {{ department }} <br>
+    Role: {{ role }} <br>
+    Supervisor?: {% if is_supervisor %} Yes {% else %} No {% endif %} <br>
+
+</p>
+<p>Sincerely, <br> The Visit Team</p>
+<p>
+    <small>Note: replies to this email address are not monitored.</small>
+</p>

@@ -10,6 +10,7 @@ from flask_mail import Message
 from sqlalchemy.orm import sessionmaker
 from ..decorators import admin_required
 from app.utils import eval_request_bool
+from ..email_notification import send_email
 
 @auth.route('/login', methods=["GET", "POST"])
 def login():
@@ -277,21 +278,52 @@ def register():
     # The admin can register new users fro mhere if they meet the requirements in the form 
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(
-            email=form.email.data.lower(),
-            password=form.password.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            department=form.department.data,
-            role=Role.query.filter_by(name=form.role.data).first(),
-            is_supervisor=form.is_supervisor.data,
-            validated=False
-        )
-        db.session.add(user)
-        db.session.commit()
-        current_app.logger.info("Successfully registered user {}".format(user.email))
-        flash("User successfully registered.", category="success")
-        return redirect(url_for("auth.register"))
+        user = User.query.filter_by(email=form.email.data.lower(), department=form.department.data).first()
+        if user:
+            # if user exist then flash and redirect
+            current_app.logger.info("{} already exists.".format(user.email))
+            flash("User {} already exists".format(user.email), category="error")
+            return redirect(url_for("auth.register"))
+
+        else:      
+            user = User(
+                email=form.email.data.lower(),
+                password=form.password.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                department=form.department.data,
+                role=Role.query.filter_by(name=form.role.data).first(),
+                is_supervisor=form.is_supervisor.data,
+                validated=False
+            )
+            db.session.add(user)
+            db.session.commit()
+            current_app.logger.info("Successfully registered user {}, sending mail".format(user.email))
+            flash("User successfully registered.", category="success")
+            # send two emails, one to the admin who created the user and one to the user saying they have an account now
+            send_email(to=current_user.email,
+                        subject= "User Registered",
+                        template="auth/email/user_register_admin",
+                        admin_name=current_user.first_name,
+                        user_email = user.email,
+                        first_name=form.first_name.data,
+                        last_name=form.last_name.data,
+                        department=form.department.data,
+                        role=Role.query.filter_by(name=form.role.data).first().name,
+                        is_supervisor=form.is_supervisor.data
+            )
+            send_email(to=user.email,
+                        subject= "User Registered",
+                        template="auth/email/user_register_user",
+                        user_email = user.email,
+                        password=form.password.data,
+                        first_name=form.first_name.data,
+                        last_name=form.last_name.data,
+                        department=form.department.data,
+                        role=Role.query.filter_by(name=form.role.data).first().name,
+                        is_supervisor=form.is_supervisor.data
+            )
+            return redirect(url_for("auth.register"))
     return render_template("auth/register.html", form=form)
 
 

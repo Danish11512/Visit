@@ -3,10 +3,16 @@ import os
 class Config():
     SECRET_KEY = os.environ.get("SECRET_KEY") or 'verysecretkey'
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("DATABASE_URI")
-        or "postgresql://developer@127.0.0.1:5432/visit_dev"
-    )
+    if os.environ.get('DATABSE_URL') is None:
+    SQLALCHEMY_DATABASE_URI = 'postgresql://developer@127.0.0.1:5432/visit_dev'
+    else:
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+
+
+    # SQLALCHEMY_DATABASE_URI = (
+    #     os.environ.get("DATABASE_URI")
+    #     or "postgresql://developer@127.0.0.1:5432/visit_dev"
+    # )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     EMAIL_DOMAIN = 'records.nyc.gov'
     ADMIN = os.environ.get("ADMIN") or "admin@records.nyc.gov"

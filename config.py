@@ -18,6 +18,12 @@ class Config():
     MAIL_SUBJECT_PREFIX = os.environ.get('MAIL_SUBJECT_PREFIX')
     MAIL_DEFAULT_SENDER = ("Records Visit" , "appdev@records.nyc.gov")
 
+class ProductionConfig(Config):
+    DEBUG = False
+
+
+
+
 
 checkin = {
     "Appointment Created": 0,

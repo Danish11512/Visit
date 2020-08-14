@@ -4,7 +4,7 @@ class Config():
     SECRET_KEY = os.environ.get("SECRET_KEY") or 'verysecretkey'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("DATABASE_URL")
+        os.environ.get("DATABASE_URI")
         or "postgresql://developer@127.0.0.1:5432/visit_dev"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -25,6 +25,7 @@ class AppointmentForm(FlaskForm):
     department = SelectField('Department', choices=departments, validators=[DataRequired()])
     date = DateField('Date', format="%m/%d/%Y", default=datetime.today(), validators=[DataRequired()])
     time = TimeField('Time', format="%I:%M %p", default=datetime.now().time(), validators=[DataRequired()])
+    description = StringField('Description', validators=[Optional(), Length(min=0, max=250)])
     submit = SubmitField('Submit')
 
 class CancelForm(FlaskForm):

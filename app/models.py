@@ -195,7 +195,17 @@ class Appointment(db.Model):
     email = db.Column(db.String(64), index=True)
     department = db.Column(db.String(9))
     approved = db.Column(db.Boolean, default=False)
+    description = db.Column(db.String(250))
     time_of_creation = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+
+    def new_time(self):
+        return self.datetime.replace(minute=55)
+
+    def return_dict(self):
+        return {"title": self.first_name + " " + self.last_name,
+                "start": str(self.datetime),
+                "end": str(self.datetime.replace(minute=self.datetime.minute + 15)) if self.datetime.minute < 45 else str(self.datetime.replace(hour=self.datetime.hour + 1, minute=15-(60-self.datetime.minute))),
+                "color": "Grey" if self.datetime.date() < datetime.now().date() else "Green" if self.department == "Research" else "Blue"}
 
 
 class ChangeLog(db.Model):

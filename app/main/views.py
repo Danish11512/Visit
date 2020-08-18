@@ -38,7 +38,8 @@ def index():
                     first_name = form.first_name.data,
                     last_name = form.last_name.data,
                     email = form.email.data,
-                    department = form.department.data
+                    department = form.department.data,
+                    description = form.description.data
                 )
                 db.session.add(app)
                 db.session.commit()

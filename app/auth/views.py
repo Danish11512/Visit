@@ -1,7 +1,8 @@
 from . import auth
 import os
+import json
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
-from ..models import User, Role
+from ..models import User, Role, Appointment
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm, ChangeUserDataForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password, update_user_information, get_changelog_by_user_id
@@ -69,7 +70,29 @@ def index():
     else:   
         flash("Logged in successfully")
         current_app.logger.info("user {} logged in".format(current_user.email))
-        return render_template("auth/index.html", name=current_user.first_name)
+        return render_template("auth/index.html")
+
+
+
+@auth.route('/data')
+def data():
+    # get all the past appointments that aren't cancelled and validated , 
+    # grey all the past ones and return as a list of json objects
+    jsonlist = []
+
+    # if the user is an admin show them everything but they aren't then they can only see the appointments for their department
+    if current_user.is_administrator():
+        appointments = Appointment.query.filter_by(approved=True).order_by(Appointment.datetime).all()
+    else:
+        appointments = Appointment.query.filter_by(approved=True, department=current_user.department).order_by(Appointment.datetime).all()
+
+    for appointment in appointments:
+    #    if the appointmnet has been verified and not cancelled add 15 ins to it's end time and then append it 
+       if appointment.check_in_state <=2:
+           jsonlist.append(appointment.return_dict())
+
+    print(jsonlist)
+    return json.dumps(jsonlist)
 
 
 @auth.route('/logout')

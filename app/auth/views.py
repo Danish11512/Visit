@@ -90,8 +90,6 @@ def data():
     #    if the appointmnet has been verified and not cancelled add 15 ins to it's end time and then append it 
        if appointment.check_in_state <=2:
            jsonlist.append(appointment.return_dict())
-
-    print(jsonlist)
     return json.dumps(jsonlist)
 
 

@@ -1,7 +1,9 @@
 from . import auth
 import os
+import json
+from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
-from ..models import User, Role
+from ..models import User, Role, Appointment
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import LoginForm, ChangePasswordForm, PasswordResetForm, RegistrationForm, ChangeUserDataForm
 from .modules import increase_login_attempt, reset_login_attempts, check_previous_passwords, check_password_requirements,update_user_password, update_user_information, get_changelog_by_user_id
@@ -69,7 +71,47 @@ def index():
     else:   
         flash("Logged in successfully")
         current_app.logger.info("user {} logged in".format(current_user.email))
-        return render_template("auth/index.html", name=current_user.first_name)
+
+        # if user has logged in load all the appointments that are approved for today and then add the to the appointments_list,
+        # I didn't remove from the original list that was queried because removing somehow always left an extra element in there
+        appointments = Appointment.query.filter_by(approved=True, department=current_user.department).all()
+        appointments_list = []
+
+        for appointment in appointments:
+            if appointment.datetime.date() == datetime.today().date() and appointment.check_in_state<3:
+                appointments_list.append(appointment)
+
+        return render_template("auth/index.html", appointments=appointments_list)
+
+
+@auth.route('/cancel/<appointment_id>', methods=["GET", "POST"])
+@login_required
+def cancel(appointment_id):
+    appointment = Appointment.query.get(appointment_id)
+    appointment.check_in_state = 3
+    db.session.add(appointment)
+    db.session.commit()
+    return redirect(url_for("auth.index"))
+
+
+
+@auth.route('/data')
+def data():
+    # get all the past appointments that aren't cancelled and validated , 
+    # grey all the past ones and return as a list of json objects
+    jsonlist = []
+
+    # if the user is an admin show them everything but they aren't then they can only see the appointments for their department
+    if current_user.is_administrator():
+        appointments = Appointment.query.filter_by(approved=True).order_by(Appointment.datetime).all()
+    else:
+        appointments = Appointment.query.filter_by(approved=True, department=current_user.department).order_by(Appointment.datetime).all()
+
+    for appointment in appointments:
+    #    if the appointmnet has been verified and not cancelled add 15 ins to it's end time and then append it 
+       if appointment.check_in_state <=2:
+           jsonlist.append(appointment.return_dict())
+    return json.dumps(jsonlist)
 
 
 @auth.route('/logout')

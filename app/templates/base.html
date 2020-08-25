@@ -20,6 +20,39 @@ NYCDORIS Visit
   rel="stylesheet" media="screen">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.js">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  #script-warning {
+    display: none;
+    background: #eee;
+    border-bottom: 1px solid #ddd;
+    padding: 0 10px;
+    line-height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: red;
+  }
+
+  #loading {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 10px;
+  }
+</style>
 {% endblock %}
 
 
@@ -78,6 +111,44 @@ NYCDORIS Visit
 <!-- Include any JS scripts here -->
 {{ super() }}
 {{ moment.include_moment() }}
+{% if current_user.validated %}
+<link href="{{ url_for('static', filename='fullcalendar.min.css') }}" rel='stylesheet' />
+<link href="{{ url_for('static', filename='fullcalendar.print.css') }}" rel='stylesheet' media='print' />
+<script src="{{ url_for('static', filename='lib/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='fullcalendar.min.js') }}"></script>
+<script>
+  $(document).ready(function () {
+
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      defaultDate: new Date(),
+      contentHeight: 'auto',
+      editable: true,
+      eventLimit: true, // allow "more" link when too many events
+      windowResize: function(view) {},
+      events: {
+        url: '/auth/data',
+        error: function () {
+          $('#script-warning').show();
+        }
+      },
+      loading: function (bool) {
+        $('#loading').toggle(bool);
+      },
+      slotDuration: '00:15',
+      minTime: '09:00',
+      maxTime: '18:00'
+    });
+
+  });
+
+</script>
+{% else %}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
 <script type="text/javascript"
@@ -104,4 +175,6 @@ NYCDORIS Visit
     });
   });
 </script>
+
+{% endif %}
 {% endblock %}

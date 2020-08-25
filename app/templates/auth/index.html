@@ -9,11 +9,58 @@ Visit - Home
 {% block content %}
 
 <br><br><br><br><br><br>
-<body>
-  <class class="index-header text-center">
-    <h1>Hello {{name}} !</h1>
-  </class>
 
+<body>
+	<div class="container">
+		<div class="row">
+			<div id='script-warning'>
+				Error getting data from <code>source</code> endpoint.
+			</div>
+			<div id='loading'>loading...</div>
+			<div id='calendar'></div>
+		</div>
+		<br><br>
+		<div class="row">
+			<h2 class="text-center">Today's Appointments</h2><br>
+			<div class="col-xs-12 col-md-12 col-lg-12" style="padding: 0%;">
+				<table class="table">
+				  <thead>
+					<tr>
+					  <th>Time</th>
+					  <th>Email</th>
+					  <th>First Name</th>
+					  <th>Last Name</th>
+					  <th>Department</th>
+					  <th>Status</th>
+					  <th>Description</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					{% for appointment in appointments|sort(attribute='datetime') %}
+					<tr>
+					  <td>{{ appointment.datetime.strftime("%I:%M %p") }}</td>
+					  <td>{{ appointment.email }}</td>
+					  <td>{{ appointment.first_name }}</td>
+					  <td>{{ appointment.last_name }}</td>
+					  <td>{{ appointment.department }}</td>
+					  <td>{% if appointment.check_in_state == 0 %} 
+						<button type="button" class="btn btn-light">Not Checked In</button>
+						{% elif appointment.check_in_state == 1 %}		
+						<button type="button" class="btn btn-warning">Checked In</button>
+						{% else %}
+						<button type="button" class="btn btn-success">Checked Out</button>
+						{% endif %}</td>
+					  <td>{{ appointment.description }}</td>
+					  <td><a class="btn btn-danger" style="font-size:12px" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Cancel</a></td>
+					</tr>
+					{% endfor %}
+				  </tbody>
+				</table>
+			  </div>
+		</div>
+
+
+	</div>
 
 </body>
 <!-- </div>/.container -->

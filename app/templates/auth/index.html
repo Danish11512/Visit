@@ -38,7 +38,7 @@ Visit - Home
 				  <tbody>
 					{% for appointment in appointments|sort(attribute='datetime') %}
 					<tr>
-					  <td>{{ appointment.datetime.strftime("%H:%M %p") }}</td>
+					  <td>{{ appointment.datetime.strftime("%I:%M %p") }}</td>
 					  <td>{{ appointment.email }}</td>
 					  <td>{{ appointment.first_name }}</td>
 					  <td>{{ appointment.last_name }}</td>

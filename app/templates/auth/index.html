@@ -9,30 +9,58 @@ Visit - Home
 {% block content %}
 
 <br><br><br><br><br><br>
+
 <body>
- <div class="container">
-	<div class="row">
-		<div class="col">
+	<div class="container">
+		<div class="row">
 			<div id='script-warning'>
 				Error getting data from <code>source</code> endpoint.
 			</div>
 			<div id='loading'>loading...</div>
 			<div id='calendar'></div>
 		</div>
-
-		<div class="col">
-			<div class="card" style="width: 18rem;">
-				<div class="card-body">
-				  <h5 class="card-title">Card title</h5>
-				  <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-				  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-				  <a href="#" class="card-link">Card link</a>
-				  <a href="#" class="card-link">Another link</a>
-				</div>
+		<br><br>
+		<div class="row">
+			<h2 class="text-center">Today's Appointments</h2><br>
+			<div class="col-xs-12 col-md-12 col-lg-12" style="padding: 0%;">
+				<table class="table">
+				  <thead>
+					<tr>
+					  <th>Time</th>
+					  <th>Email</th>
+					  <th>First Name</th>
+					  <th>Last Name</th>
+					  <th>Department</th>
+					  <th>Status</th>
+					  <th>Description</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					{% for appointment in appointments|sort(attribute='datetime') %}
+					<tr>
+					  <td>{{ appointment.datetime.strftime("%H:%M %p") }}</td>
+					  <td>{{ appointment.email }}</td>
+					  <td>{{ appointment.first_name }}</td>
+					  <td>{{ appointment.last_name }}</td>
+					  <td>{{ appointment.department }}</td>
+					  <td>{% if appointment.check_in_state == 0 %} 
+						<button type="button" class="btn btn-light">Not Checked In</button>
+						{% elif appointment.check_in_state == 1 %}		
+						<button type="button" class="btn btn-light">Checked In</button>
+						{% else %}
+						<button type="button" class="btn btn-light">Checked Out</button>
+						{% endif %}</td>
+					  <td>{{ appointment.description }}</td>
+					  <td><a class="btn btn-danger" style="font-size:12px" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Cancel</a></td>
+					</tr>
+					{% endfor %}
+				  </tbody>
+				</table>
 			  </div>
 		</div>
+
+
 	</div>
- </div>
 
 </body>
 <!-- </div>/.container -->

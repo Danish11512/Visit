@@ -138,7 +138,7 @@ def check_out():
                 send_email(to=form.email.data, 
                 subject= "Check Out Confirmed", 
                 template="main/email/check_out", 
-                first_name=form.first_name.data, 
+                first_name=guest.first_name, 
                 department=guest.department, 
                 date=datetime.strftime(datetime.now(), "%B %d, %Y"))
                 current_app.logger.info("Guest Checked Out")

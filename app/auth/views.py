@@ -1,6 +1,7 @@
 from . import auth
 import os
 import json
+from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, flash, current_app,request
 from ..models import User, Role, Appointment
 from flask_login import login_required, login_user, logout_user, current_user
@@ -70,7 +71,27 @@ def index():
     else:   
         flash("Logged in successfully")
         current_app.logger.info("user {} logged in".format(current_user.email))
-        return render_template("auth/index.html")
+
+        # if user has logged in load all the appointments that are approved for today and then add the to the appointments_list,
+        # I didn't remove from the original list that was queried because removing somehow always left an extra element in there
+        appointments = Appointment.query.filter_by(approved=True, department=current_user.department).all()
+        appointments_list = []
+
+        for appointment in appointments:
+            if appointment.datetime.date() == datetime.today().date() and appointment.check_in_state<3:
+                appointments_list.append(appointment)
+
+        return render_template("auth/index.html", appointments=appointments_list)
+
+
+@auth.route('/cancel/<appointment_id>', methods=["GET", "POST"])
+@login_required
+def cancel(appointment_id):
+    appointment = Appointment.query.get(appointment_id)
+    appointment.check_in_state = 3
+    db.session.add(appointment)
+    db.session.commit()
+    return redirect(url_for("auth.index"))
 
 
 

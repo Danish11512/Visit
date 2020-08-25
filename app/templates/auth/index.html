@@ -19,6 +19,13 @@ Visit - Home
 			<div id='loading'>loading...</div>
 			<div id='calendar'></div>
 		</div>
+		<div class="row">
+			<div class="card">
+				<div class="card-body">
+				  This is some text within a card body.
+				</div>
+			  </div>
+		</div>
 		<br><br>
 		<div class="row">
 			<h2 class="text-center">Today's Appointments</h2><br>
@@ -51,8 +58,25 @@ Visit - Home
 						<button type="button" class="btn btn-success">Checked Out</button>
 						{% endif %}</td>
 					  <td>{{ appointment.description }}</td>
-					  <td><a class="btn btn-danger" style="font-size:12px" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Cancel</a></td>
+					  <td><button type="button" class="btn btn-danger" style="font-size:12px" data-toggle="modal" data-target="#myModal">Cancel</button></td>
 					</tr>
+					<div class="modal fade" id="myModal" role="dialog">
+						<div class="modal-dialog">
+						
+						  <!-- Modal content-->
+						  <div class="modal-content">
+							<div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal">&times;</button>
+							  <h4 class="modal-title">Warning</h4>
+							</div>
+							<div class="modal-body">
+							  <p>Are you sure you want to cancel this appointment?</p>
+							  <a class="btn btn-danger" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Yes, Cancel</a>
+							</div>
+						  </div>
+						  
+						</div>
+					  </div>
 					{% endfor %}
 				  </tbody>
 				</table>

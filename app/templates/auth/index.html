@@ -46,9 +46,9 @@ Visit - Home
 					  <td>{% if appointment.check_in_state == 0 %} 
 						<button type="button" class="btn btn-light">Not Checked In</button>
 						{% elif appointment.check_in_state == 1 %}		
-						<button type="button" class="btn btn-light">Checked In</button>
+						<button type="button" class="btn btn-warning">Checked In</button>
 						{% else %}
-						<button type="button" class="btn btn-light">Checked Out</button>
+						<button type="button" class="btn btn-success">Checked Out</button>
 						{% endif %}</td>
 					  <td>{{ appointment.description }}</td>
 					  <td><a class="btn btn-danger" style="font-size:12px" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Cancel</a></td>

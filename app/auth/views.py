@@ -72,16 +72,31 @@ def index():
         flash("Logged in successfully")
         current_app.logger.info("user {} logged in".format(current_user.email))
 
-        # if user has logged in load all the appointments that are approved for today and then add the to the appointments_list,
+
+        # If the user is an admin they should be able to see all the appointments for all the departments
+        if current_user.is_administrator():
+            appointments = Appointment.query.all()
+        else:
+            appointments = Appointment.query.filter_by(department=current_user.department).all()
+
+        # if user has logged in load all the appointments that are for today and then add the to the appointments_list, those ont approvedf are put in unapproved_appointments_list,
         # I didn't remove from the original list that was queried because removing somehow always left an extra element in there
-        appointments = Appointment.query.filter_by(approved=True, department=current_user.department).all()
+        
         appointments_list = []
+        unapproved_appointments_list = []
+
+        # This page also needs to contain a list of the unaproved appointmetns so that they can be approved
 
         for appointment in appointments:
-            if appointment.datetime.date() == datetime.today().date() and appointment.check_in_state<3:
+            # if appointment if apprved and today put it in appointment list
+            if appointment.datetime.date() == datetime.today().date() and appointment.check_in_state<3 and appointment.approved == True:
                 appointments_list.append(appointment)
+            
+            # if apointment is not approved and is today or greater than today then put it in this list
+            if appointment.datetime.date() >= datetime.today().date() and appointment.check_in_state<3 and appointment.approved == False:
+                unapproved_appointments_list.append(appointment)
 
-        return render_template("auth/index.html", appointments=appointments_list)
+        return render_template("auth/index.html", appointments=appointments_list ,unapproved_appointments=unapproved_appointments_list, today=datetime.today().date())
 
 
 @auth.route('/cancel/<appointment_id>', methods=["GET", "POST"])
@@ -91,8 +106,19 @@ def cancel(appointment_id):
     appointment.check_in_state = 3
     db.session.add(appointment)
     db.session.commit()
+    current_app.logger.info("Appointment {} cancelled".format(appointment_id))
     return redirect(url_for("auth.index"))
 
+
+@auth.route('/approve/<appointment_id>', methods=["GET", "POST"])
+@login_required
+def approve(appointment_id):
+    appointment = Appointment.query.get(appointment_id)
+    appointment.approved = True
+    db.session.add(appointment)
+    db.session.commit()
+    current_app.logger.info("Appointment {} approved".format(appointment_id))
+    return redirect(url_for("auth.index"))
 
 
 @auth.route('/data')

@@ -13,50 +13,97 @@ Visit - Home
 <body>
 	<div class="container">
 		<div class="row">
-			<div id='script-warning'>
-				Error getting data from <code>source</code> endpoint.
+			<div class="col-xs-9 col-md-9 col-lg-9">
+				<div id='script-warning'>
+					Error getting data from <code>source</code> endpoint.
+				</div>
+				<div id='loading'>loading...</div>
+				<div id='calendar'></div>
 			</div>
-			<div id='loading'>loading...</div>
-			<div id='calendar'></div>
+			<div class="col-xs-3 col-md-3 col-lg-3">
+				<br>
+				<h2 class="text-center">Unapproved</h2>
+				<br>
+				<div class="list-group"
+					style="max-height: 650px; margin-bottom: 10px; overflow-y:auto; -webkit-overflow-scrolling: touch; ">
+					{% for unapproved in unapproved_appointments %}
+					<a class="list-group-item list-group-item-action flex-column align-items-start">
+						<div class="d-flex w-100 justify-content-between">
+							<h5 class="mb-1">{{unapproved.first_name}} {{unapproved.last_name}}</h5>
+						</div>
+						{% if current_user.is_administrator() %}
+						<p class="mb-1"> {{ unapproved.department}} </p>
+						{% endif %}
+						<p class="mb-1"> {% if unapproved.datetime.date() == today %} Today {% else %}
+							{{ unapproved.datetime.strftime("%A %b %d,%Y") }} {% endif %}</p>
+						<p class="mb-1">{{ unapproved.datetime.strftime("%I:%M %p")}} </p>
+						<form action="{{ url_for('auth.approve', appointment_id=unapproved.id) }}">
+							<input
+								class="btn {% if unapproved.department == 'Genealogy' %} btn-primary {% else %} btn-success {% endif %} mb-1"
+								type="submit" value="Approve" />
+						</form>
+					</a>
+					{% endfor %}
+				</div>
+			</div>
 		</div>
 		<br><br>
 		<div class="row">
 			<h2 class="text-center">Today's Appointments</h2><br>
 			<div class="col-xs-12 col-md-12 col-lg-12" style="padding: 0%;">
 				<table class="table">
-				  <thead>
-					<tr>
-					  <th>Time</th>
-					  <th>Email</th>
-					  <th>First Name</th>
-					  <th>Last Name</th>
-					  <th>Department</th>
-					  <th>Status</th>
-					  <th>Description</th>
-					</tr>
-				  </thead>
-				  <tbody>
-					{% for appointment in appointments|sort(attribute='datetime') %}
-					<tr>
-					  <td>{{ appointment.datetime.strftime("%I:%M %p") }}</td>
-					  <td>{{ appointment.email }}</td>
-					  <td>{{ appointment.first_name }}</td>
-					  <td>{{ appointment.last_name }}</td>
-					  <td>{{ appointment.department }}</td>
-					  <td>{% if appointment.check_in_state == 0 %} 
-						<button type="button" class="btn btn-light">Not Checked In</button>
-						{% elif appointment.check_in_state == 1 %}		
-						<button type="button" class="btn btn-warning">Checked In</button>
-						{% else %}
-						<button type="button" class="btn btn-success">Checked Out</button>
-						{% endif %}</td>
-					  <td>{{ appointment.description }}</td>
-					  <td><a class="btn btn-danger" style="font-size:12px" href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Cancel</a></td>
-					</tr>
-					{% endfor %}
-				  </tbody>
+					<thead>
+						<tr>
+							<th>Time</th>
+							<th>Email</th>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Department</th>
+							<th>Status</th>
+							<th>Description</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for appointment in appointments|sort(attribute='datetime') %}
+						<tr>
+							<td>{{ appointment.datetime.strftime("%I:%M %p") }}</td>
+							<td>{{ appointment.email }}</td>
+							<td>{{ appointment.first_name }}</td>
+							<td>{{ appointment.last_name }}</td>
+							<td>{{ appointment.department }}</td>
+							<td>{% if appointment.check_in_state == 0 %}
+								<button type="button" class="btn btn-light">Not Checked In</button>
+								{% elif appointment.check_in_state == 1 %}
+								<button type="button" class="btn btn-warning">Checked In</button>
+								{% else %}
+								<button type="button" class="btn btn-success">Checked Out</button>
+								{% endif %}</td>
+							<td>{{ appointment.description }}</td>
+							<td><button type="button" class="btn btn-danger" style="font-size:12px" data-toggle="modal"
+									data-target="#myModal">Cancel</button></td>
+						</tr>
+						<div class="modal fade" id="myModal" role="dialog">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal">&times;</button>
+										<h4 class="modal-title">Warning</h4>
+									</div>
+									<div class="modal-body">
+										<p>Are you sure you want to cancel this appointment?</p>
+										<a class="btn btn-danger"
+											href="{{ url_for('auth.cancel',appointment_id=appointment.id) }}">Yes,
+											Cancel</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						{% endfor %}
+					</tbody>
 				</table>
-			  </div>
+			</div>
 		</div>
 
 

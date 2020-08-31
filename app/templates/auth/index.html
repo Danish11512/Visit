@@ -37,7 +37,11 @@ Visit - Home
 						<p class="mb-1"> {% if unapproved.datetime.date() == today %} Today {% else %}
 							{{ unapproved.datetime.strftime("%A %b %d,%Y") }} {% endif %}</p>
 						<p class="mb-1">{{ unapproved.datetime.strftime("%I:%M %p")}} </p>
-						<button class="btn {% if unapproved.department == 'Genealogy' %} btn-primary {% else %} btn-success {% endif %} mb-1" href="{{ url_for('auth.approve', appointment_id=unapproved.id) }}">Approve</button>
+						<form action="{{ url_for('auth.approve', appointment_id=unapproved.id) }}">
+							<input
+								class="btn {% if unapproved.department == 'Genealogy' %} btn-primary {% else %} btn-success {% endif %} mb-1"
+								type="submit" value="Approve" />
+						</form>
 					</a>
 					{% endfor %}
 				</div>
@@ -57,6 +61,7 @@ Visit - Home
 							<th>Department</th>
 							<th>Status</th>
 							<th>Description</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>

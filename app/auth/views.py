@@ -102,10 +102,12 @@ def index():
 @auth.route('/cancel/<appointment_id>', methods=["GET", "POST"])
 @login_required
 def cancel(appointment_id):
+    # Find the appointment, change status to cancel and then email 
     appointment = Appointment.query.get(appointment_id)
     appointment.check_in_state = 3
     db.session.add(appointment)
     db.session.commit()
+    send_email(to=appointment.email, subject="Appointment Cancelled", template="auth/email/user_cancel", first_name=appointment.first_name,department=appointment.department)
     current_app.logger.info("Appointment {} cancelled".format(appointment_id))
     return redirect(url_for("auth.index"))
 
@@ -113,10 +115,12 @@ def cancel(appointment_id):
 @auth.route('/approve/<appointment_id>', methods=["GET", "POST"])
 @login_required
 def approve(appointment_id):
+    # Find the appointment, change approved to True and then email
     appointment = Appointment.query.get(appointment_id)
     appointment.approved = True
     db.session.add(appointment)
     db.session.commit()
+    send_email(to=appointment.email, subject="Appointment Approved", template="auth/email/user_approve", first_name=appointment.first_name,department=appointment.department)
     current_app.logger.info("Appointment {} approved".format(appointment_id))
     return redirect(url_for("auth.index"))
 
